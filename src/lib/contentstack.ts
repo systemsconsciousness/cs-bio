@@ -91,7 +91,7 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
   try {
     await ensureSetup();
     const query = stack.ContentType('blog_post').Query();
-    query.orderByDescending('published_date');
+    query.descending('published_date');
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
