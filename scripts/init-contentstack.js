@@ -130,7 +130,7 @@ const contentTypes = {
       },
       {
         display_name: "Tags",
-        uid: "tags",
+        uid: "blog_tags",
         data_type: "text",
         multiple: true
       }
@@ -263,7 +263,7 @@ const sampleContent = {
       content: "In today's fast-paced digital world, traditional monolithic CMS platforms are being challenged by a new approach: headless CMS...",
       author: "John Doe",
       published_date: "2024-01-15T10:00:00.000Z",
-      tags: ["CMS", "Architecture", "Web Development"]
+      blog_tags: ["CMS", "Architecture", "Web Development"]
     },
     {
       title: "Building Scalable React Applications",
@@ -272,7 +272,7 @@ const sampleContent = {
       content: "Scalability in React applications isn't just about handling more users—it's about creating code that's maintainable...",
       author: "John Doe",
       published_date: "2024-01-10T14:30:00.000Z",
-      tags: ["React", "JavaScript", "Scalability"]
+      blog_tags: ["React", "JavaScript", "Scalability"]
     }
   ],
   
