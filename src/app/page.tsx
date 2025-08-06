@@ -9,7 +9,7 @@ import {
   getBlogPosts, 
   getWorkExperiences, 
   getPortfolioProjects 
-} from '@/lib/data';
+} from '@/lib/contentstack';
 
 export default async function Home() {
   // Fetch all content from Contentstack

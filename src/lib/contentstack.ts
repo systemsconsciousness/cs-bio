@@ -1,12 +1,16 @@
 import Contentstack from 'contentstack';
+import { ensureContentTypesExist, checkContentTypesExist } from './contentstack-setup';
 
-// Initialize Contentstack SDK
+// Initialize Contentstack SDK with your specific env vars
 const stack = Contentstack.Stack({
-  api_key: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY!,
-  delivery_token: process.env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN!,
-  environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT || 'development',
-  region: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION || 'us',
+  api_key: process.env.CONTENTSTACK_API_KEY!,
+  delivery_token: process.env.CONTENTSTACK_DELIVERY_TOKEN!,
+  environment: process.env.CONTENTSTACK_ENVIRONMENT || 'production',
+  host: process.env.CONTENTSTACK_CDN || 'cdn.contentstack.com/v3',
 });
+
+// Flag to track if setup has been attempted
+let setupAttempted = false;
 
 // Type definitions for our content types
 export interface HomePageContent {
@@ -59,9 +63,22 @@ export interface PortfolioProject {
   updated_at: string;
 }
 
+// Ensure content types exist before making queries
+async function ensureSetup() {
+  if (setupAttempted) return;
+  setupAttempted = true;
+  
+  const contentTypesExist = await checkContentTypesExist();
+  if (!contentTypesExist) {
+    console.log('🔧 Content types not found, setting up Contentstack...');
+    await ensureContentTypesExist();
+  }
+}
+
 // API functions
 export const getHomePageContent = async (): Promise<HomePageContent | null> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('home_page').Query();
     const result = await query.toJSON().find();
     return result[0]?.[0] || null;
@@ -73,6 +90,7 @@ export const getHomePageContent = async (): Promise<HomePageContent | null> => {
 
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('blog_post').Query();
     query.orderByDescending('published_date');
     const result = await query.toJSON().find();
@@ -85,6 +103,7 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
 
 export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('blog_post').Query();
     query.where('slug', slug);
     const result = await query.toJSON().find();
@@ -97,6 +116,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 
 export const getWorkExperiences = async (): Promise<WorkExperience[]> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('work_experience').Query();
     query.orderByDescending('start_date');
     const result = await query.toJSON().find();
@@ -109,6 +129,7 @@ export const getWorkExperiences = async (): Promise<WorkExperience[]> => {
 
 export const getPortfolioProjects = async (): Promise<PortfolioProject[]> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('portfolio_project').Query();
     query.orderByDescending('created_at');
     const result = await query.toJSON().find();
@@ -121,6 +142,7 @@ export const getPortfolioProjects = async (): Promise<PortfolioProject[]> => {
 
 export const getFeaturedProjects = async (): Promise<PortfolioProject[]> => {
   try {
+    await ensureSetup();
     const query = stack.ContentType('portfolio_project').Query();
     query.where('featured', true);
     query.orderByDescending('created_at');

@@ -1,5 +1,5 @@
 import { Calendar, MapPin } from 'lucide-react';
-import { WorkExperience as WorkExperienceType } from '@/lib/data';
+import { WorkExperience as WorkExperienceType } from '@/lib/contentstack';
 
 interface WorkExperienceProps {
   experiences: WorkExperienceType[];

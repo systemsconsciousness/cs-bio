@@ -1,5 +1,5 @@
 import { Mail, MessageCircle, Send } from 'lucide-react';
-import { HomePageContent } from '@/lib/data';
+import { HomePageContent } from '@/lib/contentstack';
 
 interface ContactProps {
   content: HomePageContent | null;

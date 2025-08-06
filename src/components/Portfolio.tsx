@@ -1,5 +1,5 @@
 import { ExternalLink, Github, Star } from 'lucide-react';
-import { PortfolioProject } from '@/lib/data';
+import { PortfolioProject } from '@/lib/contentstack';
 
 interface PortfolioProps {
   projects: PortfolioProject[];

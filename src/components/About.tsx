@@ -1,4 +1,4 @@
-import { HomePageContent } from '@/lib/data';
+import { HomePageContent } from '@/lib/contentstack';
 
 interface AboutProps {
   content: HomePageContent | null;

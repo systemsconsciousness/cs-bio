@@ -1,5 +1,5 @@
 import { ArrowDown, Download } from 'lucide-react';
-import { HomePageContent } from '@/lib/data';
+import { HomePageContent } from '@/lib/contentstack';
 
 interface HeroProps {
   content: HomePageContent | null;

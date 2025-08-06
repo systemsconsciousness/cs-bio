@@ -43,59 +43,43 @@ A modern, responsive personal portfolio website built with Next.js 15, Tailwind 
 - **TypeScript:** Full type safety
 - **Deployment:** Vercel-ready
 
-## Quick Start
+## 🚀 One-Click Deployment
 
-### 1. Clone the repository
+This portfolio is designed for **instant deployment** - no local setup required!
+
+### Deploy to Vercel (Recommended)
+
+1. **Click "Deploy to Vercel"** and connect your Contentstack credentials
+2. **Add Environment Variables** in the Vercel dashboard:
+   ```env
+   CONTENTSTACK_API_HOST=api.contentstack.io
+   CONTENTSTACK_CDN=cdn.contentstack.com/v3
+   CONTENTSTACK_API_KEY=your_api_key_here
+   CONTENTSTACK_DELIVERY_TOKEN=your_delivery_token_here
+   CONTENTSTACK_MANAGEMENT_TOKEN=your_management_token_here
+   CONTENTSTACK_ENVIRONMENT=production
+   ```
+3. **Deploy!** - Content types and sample data are created automatically on first load
+
+### Alternative: Local Development
+
+If you prefer to develop locally:
 
 \`\`\`bash
+# 1. Clone and install
 git clone https://github.com/your-username/cs-bio.git
 cd cs-bio
-\`\`\`
-
-### 2. Install dependencies
-
-\`\`\`bash
 npm install
-\`\`\`
 
-### 3. Set up environment variables
-
-Copy the example environment file and add your Contentstack credentials:
-
-\`\`\`bash
+# 2. Set up environment variables
 cp .env.example .env.local
-\`\`\`
+# Edit .env.local with your Contentstack credentials
 
-Edit \`.env.local\` with your Contentstack credentials:
-
-\`\`\`env
-# Management API (for the init script)
-CONTENTSTACK_API_KEY=your_api_key_here
-CONTENTSTACK_MANAGEMENT_TOKEN=your_management_token_here
-CONTENTSTACK_API_HOST=api.contentstack.io
-
-# Delivery API (for the frontend)
-NEXT_PUBLIC_CONTENTSTACK_API_KEY=your_api_key_here
-NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN=your_delivery_token_here
-NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT=development
-NEXT_PUBLIC_CONTENTSTACK_REGION=us
-\`\`\`
-
-### 4. Set up Contentstack
-
-Run the initialization script to create content types and sample data:
-
-\`\`\`bash
-npm run setup:contentstack
-\`\`\`
-
-### 5. Start the development server
-
-\`\`\`bash
+# 3. Start development server
 npm run dev
 \`\`\`
 
-Visit [http://localhost:3000](http://localhost:3000) to see your site.
+**That's it!** No setup scripts to run - everything happens automatically.
 
 ## Content Types
 
@@ -173,7 +157,13 @@ The site is a standard Next.js application and can be deployed to any platform t
 - \`npm run build\` - Build for production
 - \`npm run start\` - Start production server
 - \`npm run lint\` - Run ESLint
-- \`npm run setup:contentstack\` - Initialize Contentstack content types
+
+## Automatic Setup
+
+✨ **No manual setup required!** The app automatically:
+- Detects if Contentstack content types exist
+- Creates content types and sample data on first load
+- Handles all API configurations seamlessly
 
 ## Support
 

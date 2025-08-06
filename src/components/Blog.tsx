@@ -1,5 +1,5 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import { BlogPost } from '@/lib/data';
+import { BlogPost } from '@/lib/contentstack';
 
 interface BlogProps {
   posts: BlogPost[];
