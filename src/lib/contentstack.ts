@@ -117,7 +117,7 @@ export const getWorkExperiences = async (): Promise<WorkExperience[]> => {
   try {
     await ensureSetup();
     const query = stack.ContentType('work_experience').Query();
-    query.orderByDescending('start_date');
+    query.descending('start_date');
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
@@ -130,7 +130,7 @@ export const getPortfolioProjects = async (): Promise<PortfolioProject[]> => {
   try {
     await ensureSetup();
     const query = stack.ContentType('portfolio_project').Query();
-    query.orderByDescending('created_at');
+    query.descending('created_at');
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
@@ -144,7 +144,7 @@ export const getFeaturedProjects = async (): Promise<PortfolioProject[]> => {
     await ensureSetup();
     const query = stack.ContentType('portfolio_project').Query();
     query.where('featured', true);
-    query.orderByDescending('created_at');
+    query.descending('created_at');
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
