@@ -12,6 +12,16 @@ const stack = Contentstack.Stack({
 let setupAttempted = false;
 
 // Type definitions for our content types
+export interface SiteConfiguration {
+  title: string;
+  site_name: string;
+  site_subtitle: string;
+  owner_name: string;
+  owner_email: string;
+  bio: string;
+  setup_completed: boolean;
+}
+
 export interface HomePageContent {
   title: string;
   hero_headline: string;
@@ -75,6 +85,75 @@ async function ensureSetup() {
 }
 
 // API functions
+export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> => {
+  try {
+    await ensureSetup();
+    const query = stack.ContentType('site_configuration').Query();
+    query.descending('created_at');
+    const result = await query.toJSON().find();
+    return result[0]?.[0] || null;
+  } catch (error) {
+    console.error('Error fetching site configuration:', error);
+    return null;
+  }
+};
+
+export const updateSiteConfiguration = async (data: Partial<SiteConfiguration>): Promise<boolean> => {
+  try {
+    await ensureSetup();
+    
+    // First get the existing entry
+    const query = stack.ContentType('site_configuration').Query();
+    const result = await query.toJSON().find();
+    const existingEntry = result[0]?.[0];
+    
+    if (!existingEntry) {
+      console.error('No site configuration found to update');
+      return false;
+    }
+
+    // Update the entry using Contentstack Management API
+    const MGMT_TOKEN = process.env.CONTENTSTACK_MANAGEMENT_TOKEN;
+    const API_KEY = process.env.CONTENTSTACK_API_KEY;
+    const API_HOST = process.env.CONTENTSTACK_API_HOST || 'api.contentstack.io';
+    
+    if (!MGMT_TOKEN || !API_KEY) {
+      console.error('Missing management token or API key for updating configuration');
+      return false;
+    }
+
+    const response = await fetch(
+      `https://${API_HOST}/v3/content_types/site_configuration/entries/${existingEntry.uid}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': API_KEY,
+          'authorization': MGMT_TOKEN,
+        },
+        body: JSON.stringify({
+          entry: {
+            ...existingEntry,
+            ...data,
+            setup_completed: true
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Failed to update site configuration:', await response.text());
+      return false;
+    }
+
+    console.log('✅ Site configuration updated successfully');
+    return true;
+  } catch (error) {
+    console.error('Error updating site configuration:', error);
+    return false;
+  }
+};
+
 export const getHomePageContent = async (): Promise<HomePageContent | null> => {
   try {
     await ensureSetup();

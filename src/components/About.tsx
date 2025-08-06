@@ -1,10 +1,11 @@
-import { HomePageContent } from '@/lib/contentstack';
+import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 
 interface AboutProps {
   content: HomePageContent | null;
+  siteConfig: SiteConfiguration | null;
 }
 
-const About = ({ content }: AboutProps) => {
+const About = ({ content, siteConfig }: AboutProps) => {
   return (
     <section id="about" className="py-20 bg-muted/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,14 +17,14 @@ const About = ({ content }: AboutProps) => {
                 About Me
               </h2>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 sm:mb-6">
-                Passionate about crafting digital experiences
+                About {siteConfig?.owner_name || 'Me'}
               </h3>
             </div>
 
             <div className="prose prose-lg max-w-none">
               <p className="text-muted-foreground leading-relaxed">
-                {content?.about_section || 
-                  "I'm a passionate full-stack developer with expertise in React, Node.js, and cloud technologies. I love creating innovative solutions that make a real impact."
+                {siteConfig?.bio || content?.about_section || 
+                  "I'm a passionate creator building amazing things. Welcome to my digital space where I share my work, thoughts, and journey."
                 }
               </p>
             </div>
@@ -35,10 +36,10 @@ const About = ({ content }: AboutProps) => {
                 <p className="text-muted-foreground">
                   <span className="font-medium">Email:</span>{' '}
                   <a 
-                    href={`mailto:${content?.contact_email || 'hello@example.com'}`}
+                    href={`mailto:${siteConfig?.owner_email || content?.contact_email || 'hello@example.com'}`}
                     className="text-accent hover:underline"
                   >
-                    {content?.contact_email || 'hello@example.com'}
+                    {siteConfig?.owner_email || content?.contact_email || 'hello@example.com'}
                   </a>
                 </p>
                 <p className="text-muted-foreground">

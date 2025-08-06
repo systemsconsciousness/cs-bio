@@ -33,6 +33,77 @@ async function makeRequest(method: string, url: string, data: unknown = null) {
 
 // Content Type Schemas (same as before but with corrected field names)
 const contentTypes = {
+  site_configuration: {
+    title: "Site Configuration",
+    uid: "site_configuration",
+    schema: [
+      {
+        display_name: "Title",
+        uid: "title",
+        data_type: "text",
+        field_metadata: { _default: true, mandatory: true },
+        unique: false
+      },
+      {
+        display_name: "Site Name",
+        uid: "site_name",
+        data_type: "text",
+        field_metadata: {
+          description: "The name of your personal website",
+          mandatory: true
+        },
+        unique: false
+      },
+      {
+        display_name: "Site Subtitle",
+        uid: "site_subtitle",
+        data_type: "text",
+        field_metadata: {
+          description: "A short description or tagline for your site"
+        },
+        unique: false
+      },
+      {
+        display_name: "Owner Name",
+        uid: "owner_name",
+        data_type: "text",
+        field_metadata: {
+          description: "Your full name",
+          mandatory: true
+        },
+        unique: false
+      },
+      {
+        display_name: "Owner Email",
+        uid: "owner_email",
+        data_type: "text",
+        field_metadata: {
+          description: "Your contact email address"
+        },
+        unique: false
+      },
+      {
+        display_name: "Bio",
+        uid: "bio",
+        data_type: "text",
+        field_metadata: {
+          description: "A short bio about yourself",
+          multiline: true
+        },
+        unique: false
+      },
+      {
+        display_name: "Setup Completed",
+        uid: "setup_completed",
+        data_type: "boolean",
+        field_metadata: {
+          description: "Indicates if initial setup has been completed",
+          mandatory: true
+        },
+        unique: false
+      }
+    ]
+  },
   home: {
     title: "Home Page",
     uid: "home_page",
@@ -233,6 +304,15 @@ const contentTypes = {
 
 // Sample content data
 const sampleContent = {
+  site_configuration: {
+    title: "Site Configuration",
+    site_name: "My Personal Site",
+    site_subtitle: "Welcome to my digital space",
+    owner_name: "Your Name",
+    owner_email: "hello@example.com", 
+    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey.",
+    setup_completed: false
+  },
   home_page: {
     title: "Welcome to My Bio Site",
     hero_headline: "Full-Stack Developer & Digital Creator",
@@ -341,6 +421,13 @@ export async function ensureContentTypesExist(): Promise<boolean> {
 }
 
 async function createSampleContent() {
+  // Create Site Configuration
+  await makeRequest(
+    'POST',
+    `${BASE_URL}/v3/content_types/site_configuration/entries`,
+    { entry: sampleContent.site_configuration }
+  );
+  
   // Create Home Page
   await makeRequest(
     'POST',
@@ -384,7 +471,7 @@ export async function checkContentTypesExist(): Promise<boolean> {
     const response = await axios.get(`${BASE_URL}/v3/content_types`, { headers });
     const contentTypeUids = response.data.content_types?.map((ct: { uid: string }) => ct.uid) || [];
     
-    const requiredTypes = ['home_page', 'blog_post', 'work_experience', 'portfolio_project'];
+    const requiredTypes = ['site_configuration', 'home_page', 'blog_post', 'work_experience', 'portfolio_project'];
     return requiredTypes.every(type => contentTypeUids.includes(type));
   } catch {
     return false;

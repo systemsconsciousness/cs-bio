@@ -1,11 +1,12 @@
 import { ArrowDown, Download } from 'lucide-react';
-import { HomePageContent } from '@/lib/contentstack';
+import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 
 interface HeroProps {
   content: HomePageContent | null;
+  siteConfig: SiteConfiguration | null;
 }
 
-const Hero = ({ content }: HeroProps) => {
+const Hero = ({ content, siteConfig }: HeroProps) => {
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -14,7 +15,7 @@ const Hero = ({ content }: HeroProps) => {
           <div className="relative inline-block">
             <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
               <span className="text-accent-foreground text-4xl font-bold">
-                {content?.title?.charAt(0) || 'C'}
+                {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
               </span>
             </div>
             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-background"></div>
@@ -24,15 +25,15 @@ const Hero = ({ content }: HeroProps) => {
           <div className="space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
               <span className="block text-foreground">
-                {content?.hero_headline || 'Full-Stack Developer'}
+                {siteConfig?.owner_name || content?.hero_headline || 'Your Name'}
               </span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70">
-                & Digital Creator
+                {siteConfig?.site_subtitle || content?.hero_headline || 'Creator & Developer'}
               </span>
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-              {content?.hero_subtext || 'Building amazing web experiences with modern technologies'}
+              {siteConfig?.bio || content?.hero_subtext || 'Welcome to my digital space where I share my work and journey.'}
             </p>
           </div>
 
