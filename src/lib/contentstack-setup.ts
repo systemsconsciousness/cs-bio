@@ -4,7 +4,6 @@ import axios from 'axios';
 const API_KEY = process.env.CONTENTSTACK_API_KEY;
 const MGMT_TOKEN = process.env.CONTENTSTACK_MANAGEMENT_TOKEN;
 const API_HOST = process.env.CONTENTSTACK_API_HOST || 'api.contentstack.io';
-const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
 const BASE_URL = `https://${API_HOST}`;
 
 const headers = {
@@ -14,19 +13,20 @@ const headers = {
 };
 
 // Helper function to handle API requests
-async function makeRequest(method: string, url: string, data: any = null) {
+async function makeRequest(method: string, url: string, data: unknown = null) {
   try {
-    const config = { method, url, headers };
-    if (data) (config as any).data = data;
+    const config: { method: string; url: string; headers: typeof headers; data?: unknown } = { method, url, headers };
+    if (data) config.data = data;
     
     const response = await axios(config);
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If content type already exists, that's fine
-    if (error.response?.status === 422 && error.response?.data?.errors?.title) {
+    const axiosError = error as { response?: { status?: number; data?: { errors?: { title?: unknown } } } };
+    if (axiosError.response?.status === 422 && axiosError.response?.data?.errors?.title) {
       return null; // Already exists
     }
-    console.error('Contentstack setup error:', error.response?.data || error.message);
+    console.error('Contentstack setup error:', axiosError.response?.data || (error as Error).message);
     throw error;
   }
 }
@@ -320,7 +320,7 @@ export async function ensureContentTypesExist(): Promise<boolean> {
     console.log('🚀 Setting up Contentstack content types...');
     
     // Create content types
-    for (const [key, contentType] of Object.entries(contentTypes)) {
+    for (const [, contentType] of Object.entries(contentTypes)) {
       await makeRequest(
         'POST',
         `${BASE_URL}/v3/content_types`,
@@ -382,11 +382,11 @@ export async function checkContentTypesExist(): Promise<boolean> {
   
   try {
     const response = await axios.get(`${BASE_URL}/v3/content_types`, { headers });
-    const contentTypeUids = response.data.content_types?.map((ct: any) => ct.uid) || [];
+    const contentTypeUids = response.data.content_types?.map((ct: { uid: string }) => ct.uid) || [];
     
     const requiredTypes = ['home_page', 'blog_post', 'work_experience', 'portfolio_project'];
     return requiredTypes.every(type => contentTypeUids.includes(type));
-  } catch (error) {
+  } catch {
     return false;
   }
 }

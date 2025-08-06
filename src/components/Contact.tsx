@@ -17,7 +17,7 @@ const Contact = ({ content }: ContactProps) => {
             Let's Work Together
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have a project in mind? I'd love to hear about it. Send me a message and let's discuss how we can bring your ideas to life.
+            Have a project in mind? I&apos;d love to hear about it. Send me a message and let&apos;s discuss how we can bring your ideas to life.
           </p>
         </div>
 
@@ -27,7 +27,7 @@ const Contact = ({ content }: ContactProps) => {
             <div>
               <h4 className="text-lg sm:text-xl font-bold text-foreground mb-3 sm:mb-4">Get in Touch</h4>
               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4 sm:mb-6">
-                I'm always interested in new opportunities and collaborations. Whether you have a project, 
+                I&apos;m always interested in new opportunities and collaborations. Whether you have a project, 
                 a question, or just want to say hello, feel free to reach out!
               </p>
             </div>

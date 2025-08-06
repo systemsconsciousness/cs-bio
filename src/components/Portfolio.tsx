@@ -17,7 +17,7 @@ const Portfolio = ({ projects }: PortfolioProps) => {
             Featured Projects
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            A showcase of my recent work and side projects that I'm passionate about.
+            A showcase of my recent work and side projects that I&apos;m passionate about.
           </p>
         </div>
 

@@ -25,7 +25,7 @@ const WorkExperience = ({ experiences }: WorkExperienceProps) => {
             Work History
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            A journey through my professional career and the amazing teams I've worked with.
+            A journey through my professional career and the amazing teams I&apos;ve worked with.
           </p>
         </div>
 
