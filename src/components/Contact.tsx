@@ -14,7 +14,7 @@ const Contact = ({ content }: ContactProps) => {
             Contact
           </h2>
           <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Let's Work Together
+            Let&apos;s Work Together
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Have a project in mind? I&apos;d love to hear about it. Send me a message and let&apos;s discuss how we can bring your ideas to life.

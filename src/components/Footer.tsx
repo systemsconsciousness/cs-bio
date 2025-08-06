@@ -87,7 +87,7 @@ const Footer = () => {
               href="#contact"
               className="inline-flex items-center px-4 py-2 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 transition-colors"
             >
-              Let's Connect
+              Let&apos;s Connect
             </a>
           </div>
         </div>
