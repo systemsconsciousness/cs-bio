@@ -64,12 +64,13 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    await axios.put(
+    const updateResponse = await axios.put(
       `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}`,
       updateData,
       { headers }
     );
 
+    console.log('✅ Site configuration updated successfully:', updateResponse.data);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Setup API error:', error);

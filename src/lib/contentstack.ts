@@ -89,9 +89,28 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
   try {
     await ensureSetup();
     const query = stack.ContentType('site_configuration').Query();
-    query.descending('created_at');
+    query.descending('updated_at'); // Use updated_at instead of created_at
+    query.includeCount(); // Include count
     const result = await query.toJSON().find();
-    return result[0]?.[0] || null;
+    
+    console.log('🔍 Site configuration query result:', JSON.stringify(result, null, 2));
+    
+    // Check if result is an array with entries
+    let siteConfig = null;
+    if (Array.isArray(result) && result.length > 0) {
+      if (Array.isArray(result[0])) {
+        siteConfig = result[0][0]; // Nested array structure
+      } else {
+        siteConfig = result[0]; // Direct array structure
+      }
+    } else if (result && result.entries && result.entries.length > 0) {
+      siteConfig = result.entries[0]; // Object with entries property
+    }
+    
+    console.log('🔍 Extracted site config:', JSON.stringify(siteConfig, null, 2));
+    console.log('🔍 Setup completed flag:', siteConfig?.setup_completed);
+    
+    return siteConfig;
   } catch (error) {
     console.error('Error fetching site configuration:', error);
     return null;
