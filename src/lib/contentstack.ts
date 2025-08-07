@@ -98,20 +98,20 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
       query.descending('updated_at');
       const result = await query.toJSON().find();
       
-      console.log('🔍 SDK query result:', JSON.stringify(result, null, 2));
-      
-      // Check various possible data structures
-      if (Array.isArray(result) && result.length > 0) {
-        if (Array.isArray(result[0])) {
-          siteConfig = result[0][0]; // Nested array
-        } else {
-          siteConfig = result[0]; // Direct array
-        }
-      } else if (result && result.entries && result.entries.length > 0) {
-        siteConfig = result.entries[0]; // Object with entries
+          console.log('🔍 SDK query result structure:', Array.isArray(result) ? 'array' : typeof result, 'length:', result?.length || result?.entries?.length || 0);
+    
+    // Check various possible data structures
+    if (Array.isArray(result) && result.length > 0) {
+      if (Array.isArray(result[0])) {
+        siteConfig = result[0][0]; // Nested array
+      } else {
+        siteConfig = result[0]; // Direct array
       }
-      
-      console.log('🔍 SDK extracted config:', JSON.stringify(siteConfig, null, 2));
+    } else if (result && result.entries && result.entries.length > 0) {
+      siteConfig = result.entries[0]; // Object with entries
+    }
+    
+    console.log('🔍 SDK extracted config exists:', !!siteConfig, 'setup_completed:', siteConfig?.setup_completed);
     } catch (sdkError) {
       console.log('🔍 SDK query failed, trying management API:', sdkError);
     }
@@ -121,7 +121,6 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
       try {
         const API_KEY = process.env.CONTENTSTACK_API_KEY;
         const DELIVERY_TOKEN = process.env.CONTENTSTACK_DELIVERY_TOKEN;
-        const API_HOST = process.env.CONTENTSTACK_API_HOST || 'api.contentstack.io';
         const CDN = process.env.CONTENTSTACK_CDN || 'cdn.contentstack.io';
         const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
         
@@ -139,7 +138,7 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
           
           if (response.ok) {
             const data = await response.json();
-            console.log('🔍 Direct API result:', JSON.stringify(data, null, 2));
+            console.log('🔍 Direct API result entries count:', data.entries?.length || 0);
             
             if (data.entries && data.entries.length > 0) {
               siteConfig = data.entries[0];
@@ -151,7 +150,7 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
       }
     }
     
-    console.log('🔍 Final extracted site config:', JSON.stringify(siteConfig, null, 2));
+    console.log('🔍 Final site config exists:', !!siteConfig);
     console.log('🔍 Setup completed flag:', siteConfig?.setup_completed);
     
     return siteConfig;

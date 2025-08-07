@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     const API_KEY = process.env.CONTENTSTACK_API_KEY;
     const MGMT_TOKEN = process.env.CONTENTSTACK_MANAGEMENT_TOKEN;
     const API_HOST = process.env.CONTENTSTACK_API_HOST || 'api.contentstack.io';
+    const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
     const BASE_URL = `https://${API_HOST}`;
 
     if (!API_KEY || !MGMT_TOKEN) {
@@ -49,7 +50,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const entryUid = entries[0].uid;
+    const currentEntry = entries[0];
+    const entryUid = currentEntry.uid;
+    
+    console.log('🔍 Current entry before update:', JSON.stringify(currentEntry, null, 2));
 
     // Update the site configuration entry
     const updateData = {
@@ -64,6 +68,8 @@ export async function POST(request: NextRequest) {
       }
     };
 
+    console.log('🔧 Update data being sent:', JSON.stringify(updateData, null, 2));
+
     const updateResponse = await axios.put(
       `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}`,
       updateData,
@@ -71,6 +77,28 @@ export async function POST(request: NextRequest) {
     );
 
     console.log('✅ Site configuration updated successfully:', updateResponse.data);
+
+    // Publish the updated entry so it's available via delivery API
+    try {
+      const publishData = {
+        entry: {
+          environments: [ENVIRONMENT || 'production'],
+          locales: ['en-us']
+        }
+      };
+
+      await axios.post(
+        `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}/publish`,
+        publishData,
+        { headers }
+      );
+
+      console.log('✅ Site configuration published successfully');
+    } catch (publishError) {
+      console.warn('⚠️ Failed to publish entry, but update succeeded:', publishError);
+      // Don't fail the request if publish fails, the update is what matters
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Setup API error:', error);

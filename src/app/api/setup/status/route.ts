@@ -21,8 +21,7 @@ export async function GET() {
     return NextResponse.json({
       setupCompleted,
       rawSetupFlag: siteConfig?.setup_completed,
-      siteConfigExists: !!siteConfig,
-      debug: process.env.NODE_ENV === 'development' ? siteConfig : undefined
+      siteConfigExists: !!siteConfig
     });
   } catch (error) {
     console.error('Setup status check error:', error);

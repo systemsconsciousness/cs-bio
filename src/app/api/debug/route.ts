@@ -16,9 +16,9 @@ export async function GET() {
         API_KEY: !!API_KEY,
         DELIVERY_TOKEN: !!DELIVERY_TOKEN,
         MGMT_TOKEN: !!MGMT_TOKEN,
-        API_HOST,
-        CDN,
-        ENVIRONMENT
+        has_api_host: !!API_HOST,
+        has_cdn: !!CDN,
+        has_environment: !!ENVIRONMENT
       },
       site_configuration: null,
       error: null
