@@ -19,7 +19,6 @@ export interface SiteConfiguration {
   owner_name: string;
   owner_email: string;
   bio: string;
-  setup_completed: boolean | string | number;
 }
 
 export interface HomePageContent {
@@ -111,7 +110,7 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
       siteConfig = result.entries[0]; // Object with entries
     }
     
-    console.log('🔍 SDK extracted config exists:', !!siteConfig, 'setup_completed:', siteConfig?.setup_completed);
+    console.log('🔍 SDK extracted config exists:', !!siteConfig);
     } catch (sdkError) {
       console.log('🔍 SDK query failed, trying management API:', sdkError);
     }
@@ -151,7 +150,6 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
     }
     
     console.log('🔍 Final site config exists:', !!siteConfig);
-    console.log('🔍 Setup completed flag:', siteConfig?.setup_completed);
     
     return siteConfig;
   } catch (error) {

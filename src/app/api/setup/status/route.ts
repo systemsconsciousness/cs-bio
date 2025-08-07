@@ -5,22 +5,15 @@ export async function GET() {
   try {
     const siteConfig = await getSiteConfiguration();
     
-    console.log('🔍 Status check - site config:', JSON.stringify(siteConfig, null, 2));
-    console.log('🔍 Status check - setup completed field:', siteConfig?.setup_completed);
+    console.log('🔍 Status check - site config exists:', !!siteConfig);
     
-    // Check setup completion with multiple fallbacks
-    const setupCompleted = !!(
-      siteConfig && 
-      (siteConfig.setup_completed === true || 
-       siteConfig.setup_completed === 'true' ||
-       siteConfig.setup_completed === 1)
-    );
+    // Setup is completed if any site configuration entry exists
+    const setupCompleted = !!siteConfig;
     
     console.log('🔍 Status check - final result:', setupCompleted);
     
     return NextResponse.json({
       setupCompleted,
-      rawSetupFlag: siteConfig?.setup_completed,
       siteConfigExists: !!siteConfig
     });
   } catch (error) {

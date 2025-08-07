@@ -91,16 +91,6 @@ const contentTypes = {
           multiline: true
         },
         unique: false
-      },
-      {
-        display_name: "Setup Completed",
-        uid: "setup_completed",
-        data_type: "boolean",
-        field_metadata: {
-          description: "Indicates if initial setup has been completed",
-          mandatory: true
-        },
-        unique: false
       }
     ]
   },
@@ -310,8 +300,7 @@ const sampleContent = {
     site_subtitle: "Welcome to my digital space",
     owner_name: "Your Name",
     owner_email: "hello@example.com", 
-    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey.",
-    setup_completed: false
+    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey."
   },
   home_page: {
     title: "Welcome to My Bio Site",
@@ -421,12 +410,7 @@ export async function ensureContentTypesExist(): Promise<boolean> {
 }
 
 async function createSampleContent() {
-  // Create Site Configuration
-  await makeRequest(
-    'POST',
-    `${BASE_URL}/v3/content_types/site_configuration/entries`,
-    { entry: sampleContent.site_configuration }
-  );
+  // Skip creating Site Configuration entry - user will create it via setup form
   
   // Create Home Page
   await makeRequest(

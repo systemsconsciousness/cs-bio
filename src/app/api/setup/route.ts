@@ -29,56 +29,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // First, get the existing site configuration entry
+    // Create the site configuration entry
     const headers = {
       'api_key': API_KEY,
       'authorization': MGMT_TOKEN,
       'Content-Type': 'application/json'
     };
 
-    // Get the site configuration entry
-    const getResponse = await axios.get(
+    // Check if site configuration already exists
+    const checkResponse = await axios.get(
       `${BASE_URL}/v3/content_types/site_configuration/entries`,
       { headers }
     );
 
-    const entries = getResponse.data.entries;
-    if (!entries || entries.length === 0) {
+    if (checkResponse.data.entries && checkResponse.data.entries.length > 0) {
       return NextResponse.json(
-        { error: 'Site configuration not found' },
-        { status: 404 }
+        { error: 'Setup has already been completed' },
+        { status: 400 }
       );
     }
 
-    const currentEntry = entries[0];
-    const entryUid = currentEntry.uid;
-    
-    console.log('🔍 Current entry before update:', JSON.stringify(currentEntry, null, 2));
-
-    // Update the site configuration entry
-    const updateData = {
+    // Create the new site configuration entry
+    const createData = {
       entry: {
         title: 'Site Configuration',
         site_name: siteName,
         site_subtitle: siteSubtitle || '',
         owner_name: ownerName,
         owner_email: ownerEmail || '',
-        bio: bio || '',
-        setup_completed: true
+        bio: bio || ''
       }
     };
 
-    console.log('🔧 Update data being sent:', JSON.stringify(updateData, null, 2));
+    console.log('🔧 Creating site configuration entry:', JSON.stringify(createData, null, 2));
 
-    const updateResponse = await axios.put(
-      `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}`,
-      updateData,
+    const createResponse = await axios.post(
+      `${BASE_URL}/v3/content_types/site_configuration/entries`,
+      createData,
       { headers }
     );
 
-    console.log('✅ Site configuration updated successfully:', updateResponse.data);
+    console.log('✅ Site configuration created successfully:', createResponse.data);
 
-    // Publish the updated entry so it's available via delivery API
+    const entryUid = createResponse.data.entry.uid;
+
+    // Publish the new entry so it's available via delivery API
     try {
       const publishData = {
         entry: {
@@ -95,8 +90,8 @@ export async function POST(request: NextRequest) {
 
       console.log('✅ Site configuration published successfully');
     } catch (publishError) {
-      console.warn('⚠️ Failed to publish entry, but update succeeded:', publishError);
-      // Don't fail the request if publish fails, the update is what matters
+      console.warn('⚠️ Failed to publish entry, but creation succeeded:', publishError);
+      // Don't fail the request if publish fails, the creation is what matters
     }
 
     return NextResponse.json({ success: true });
