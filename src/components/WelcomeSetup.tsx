@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Mail, Globe, FileText, Sparkles } from 'lucide-react';
+import { User, Globe, FileText, Sparkles } from 'lucide-react';
 
 interface SetupFormData {
   ownerName: string;

@@ -6,7 +6,6 @@ export async function generateMetadata(): Promise<Metadata> {
   
   const siteName = siteConfig?.site_name || 'My Personal Site';
   const ownerName = siteConfig?.owner_name || 'Your Name';
-  const siteSubtitle = siteConfig?.site_subtitle || 'Creator & Developer';
   const bio = siteConfig?.bio || 'Welcome to my digital space';
   
   return {
