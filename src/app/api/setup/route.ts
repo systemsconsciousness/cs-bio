@@ -85,10 +85,25 @@ export async function POST(request: NextRequest) {
           const asset = uploadResponse.data.asset;
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
-          // Try the asset UID format that Contentstack expects for file fields
-          avatarPhotoData = [asset.uid];  // Try as array
+          // Try different formats that Contentstack might expect for file fields
+          // Option 1: Just the UID string
+          // avatarPhotoData = asset.uid;
+          
+          // Option 2: Object with UID
+          avatarPhotoData = {
+            uid: asset.uid
+          };
+          
+          // Option 3: Full object format
+          // avatarPhotoData = {
+          //   uid: asset.uid,
+          //   url: asset.url,
+          //   filename: asset.filename,
+          //   content_type: asset.content_type
+          // };
+          
           console.log('Avatar photo uploaded successfully:', asset.url);
-          console.log('Using asset UID array:', [asset.uid]);
+          console.log('Using asset data format:', JSON.stringify(avatarPhotoData, null, 2));
         }
       } catch (uploadError) {
         console.warn('Failed to upload avatar photo:', uploadError);
@@ -111,11 +126,47 @@ export async function POST(request: NextRequest) {
 
     console.log('Creating site configuration with data:', JSON.stringify(createData, null, 2));
 
-    const createResponse = await axios.post(
-      `${BASE_URL}/v3/content_types/site_configuration/entries`,
-      createData,
-      { headers }
-    );
+    let createResponse;
+    try {
+      createResponse = await axios.post(
+        `${BASE_URL}/v3/content_types/site_configuration/entries`,
+        createData,
+        { headers }
+      );
+    } catch (error) {
+      console.error('Contentstack API Error Details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: error.config?.url,
+        method: error.config?.method
+      });
+      
+      // If we have an avatar photo and the request failed, try without the photo
+      if (avatarPhotoData && error.response?.status === 422) {
+        console.log('Retrying without avatar photo...');
+        const createDataWithoutPhoto = {
+          entry: {
+            title: 'Site Configuration',
+            site_name: siteName,
+            site_subtitle: siteSubtitle || '',
+            owner_name: ownerName,
+            owner_email: ownerEmail || '',
+            bio: bio || ''
+          }
+        };
+        
+        createResponse = await axios.post(
+          `${BASE_URL}/v3/content_types/site_configuration/entries`,
+          createDataWithoutPhoto,
+          { headers }
+        );
+        
+        console.log('Successfully created entry without photo. Photo format issue confirmed.');
+      } else {
+        throw error;
+      }
+    }
 
     const entryUid = createResponse.data.entry.uid;
 
