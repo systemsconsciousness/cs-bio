@@ -86,15 +86,15 @@ export async function POST(request: NextRequest) {
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
           // Try different formats that Contentstack might expect for file fields
-          // Option 1: Just the UID string
-          // avatarPhotoData = asset.uid;
+          // Based on the error, let's try just the UID string
+          avatarPhotoData = asset.uid;
           
-          // Option 2: Object with UID
-          avatarPhotoData = {
-            uid: asset.uid
-          };
+          // Option 2: Object with UID (failed)
+          // avatarPhotoData = {
+          //   uid: asset.uid
+          // };
           
-          // Option 3: Full object format
+          // Option 3: Full object format (to try if string fails)
           // avatarPhotoData = {
           //   uid: asset.uid,
           //   url: asset.url,
@@ -153,27 +153,91 @@ export async function POST(request: NextRequest) {
         method: axiosError.config?.method
       });
       
-      // If we have an avatar photo and the request failed, try without the photo
+      // If we have an avatar photo and the request failed, try alternative formats
       if (avatarPhotoData && axiosError.response?.status === 422) {
-        console.log('Retrying without avatar photo...');
-        const createDataWithoutPhoto = {
-          entry: {
-            title: 'Site Configuration',
-            site_name: siteName,
-            site_subtitle: siteSubtitle || '',
-            owner_name: ownerName,
-            owner_email: ownerEmail || '',
-            bio: bio || ''
-          }
-        };
+        console.log('First photo format failed, trying alternatives...');
         
-        createResponse = await axios.post(
-          `${BASE_URL}/v3/content_types/site_configuration/entries`,
-          createDataWithoutPhoto,
-          { headers }
+        // Get the asset UID from the form data for alternative attempts
+        const uploadedAssetResponse = await axios.get(
+          `${BASE_URL}/v3/assets?query={"uid":"${avatarPhotoData}"}`,
+          { headers: { 
+            api_key: process.env.CONTENTSTACK_API_KEY!,
+            authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
+            'Content-Type': 'application/json'
+          }}
         );
         
-        console.log('Successfully created entry without photo. Photo format issue confirmed.');
+        if (uploadedAssetResponse.data?.assets?.[0]) {
+          const asset = uploadedAssetResponse.data.assets[0];
+          
+          // Try format 2: Full object
+          console.log('Trying full object format...');
+          const createDataFormat2 = {
+            entry: {
+              title: 'Site Configuration',
+              site_name: siteName,
+              site_subtitle: siteSubtitle || '',
+              owner_name: ownerName,
+              owner_email: ownerEmail || '',
+              bio: bio || '',
+              avatar_photo: {
+                uid: asset.uid,
+                url: asset.url,
+                filename: asset.filename,
+                content_type: asset.content_type
+              }
+            }
+          };
+          
+          try {
+            createResponse = await axios.post(
+              `${BASE_URL}/v3/content_types/site_configuration/entries`,
+              createDataFormat2,
+              { headers }
+            );
+            console.log('Successfully created entry with full object format!');
+          } catch (secondError) {
+            console.log('Full object format also failed, creating without photo...');
+            const createDataWithoutPhoto = {
+              entry: {
+                title: 'Site Configuration',
+                site_name: siteName,
+                site_subtitle: siteSubtitle || '',
+                owner_name: ownerName,
+                owner_email: ownerEmail || '',
+                bio: bio || ''
+              }
+            };
+            
+            createResponse = await axios.post(
+              `${BASE_URL}/v3/content_types/site_configuration/entries`,
+              createDataWithoutPhoto,
+              { headers }
+            );
+            
+            console.log('Successfully created entry without photo. Photo format issue confirmed.');
+          }
+        } else {
+          console.log('Could not retrieve asset details, creating without photo...');
+          const createDataWithoutPhoto = {
+            entry: {
+              title: 'Site Configuration',
+              site_name: siteName,
+              site_subtitle: siteSubtitle || '',
+              owner_name: ownerName,
+              owner_email: ownerEmail || '',
+              bio: bio || ''
+            }
+          };
+          
+          createResponse = await axios.post(
+            `${BASE_URL}/v3/content_types/site_configuration/entries`,
+            createDataWithoutPhoto,
+            { headers }
+          );
+          
+          console.log('Successfully created entry without photo.');
+        }
       } else {
         throw error;
       }
