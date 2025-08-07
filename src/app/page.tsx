@@ -4,7 +4,6 @@ import WorkExperience from '@/components/WorkExperience';
 import Portfolio from '@/components/Portfolio';
 import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
-import SetupGuard from '@/components/SetupGuard';
 import { 
   getSiteConfiguration,
   getHomePageContent, 
