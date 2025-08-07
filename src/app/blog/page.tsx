@@ -1,6 +1,6 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { getBlogPosts } from '@/lib/contentstack';
-import { redirect } from 'next/navigation';
 
 // Force this page to be dynamic (not cached)
 export const dynamic = 'force-dynamic';
@@ -101,13 +101,13 @@ export default async function BlogPage() {
 
                 {/* Read More */}
                 <div className="pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
-                  <a
+                  <Link
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base"
                   >
                     Read Article
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>

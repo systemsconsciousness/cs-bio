@@ -1,4 +1,5 @@
 import { ArrowDown, Download } from 'lucide-react';
+import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 
 interface HeroProps {
@@ -14,9 +15,11 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           {/* Profile Image */}
           <div className="relative inline-block">
             {siteConfig?.avatar_photo?.url ? (
-              <img
+              <Image
                 src={siteConfig.avatar_photo.url}
                 alt={siteConfig.avatar_photo.title || siteConfig.owner_name || 'Profile'}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-full mx-auto mb-8 object-cover border-4 border-accent/20"
               />
             ) : (

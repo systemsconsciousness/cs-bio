@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
 import { getBlogPost, getBlogPosts } from '@/lib/contentstack';
 
@@ -40,13 +41,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Back to Blog */}
         <div className="mb-8">
-          <a
+          <Link
             href="/blog"
             className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Blog
-          </a>
+          </Link>
         </div>
 
         {/* Article Header */}
@@ -119,13 +120,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Article Footer */}
         <footer className="mt-16 pt-8 border-t border-border">
           <div className="flex justify-between items-center">
-            <a
+            <Link
               href="/blog"
               className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back to Blog
-            </a>
+            </Link>
             
             <div className="text-sm text-muted-foreground">
               Published {formatDate(post.published_date || post.created_at)}
