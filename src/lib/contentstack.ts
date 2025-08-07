@@ -122,7 +122,7 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
           siteConfig = result.entries[0];
         }
       }
-    } catch (sdkError) {
+    } catch {
       console.log('SDK query failed, trying management API fallback');
     }
     
