@@ -3,14 +3,18 @@ import { getSiteConfiguration } from '@/lib/contentstack';
 
 export async function GET() {
   try {
+    console.log('🔍 === Setup Status Check Starting ===');
+    
     const siteConfig = await getSiteConfiguration();
     
-    console.log('🔍 Status check - site config exists:', !!siteConfig);
+    console.log('🔍 Status check - site config result:', siteConfig ? 'EXISTS' : 'NULL');
+    console.log('🔍 Status check - site config type:', typeof siteConfig);
     
     // Setup is completed if any site configuration entry exists
     const setupCompleted = !!siteConfig;
     
     console.log('🔍 Status check - final result:', setupCompleted);
+    console.log('🔍 === Setup Status Check Complete ===');
     
     const response = NextResponse.json({
       setupCompleted,

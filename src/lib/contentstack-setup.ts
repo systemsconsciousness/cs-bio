@@ -488,15 +488,27 @@ async function createSampleContent() {
 
 // Check if content types exist
 export async function checkContentTypesExist(): Promise<boolean> {
-  if (!API_KEY) return false;
+  if (!API_KEY) {
+    console.log('🔍 No API_KEY found for content type check');
+    return false;
+  }
   
   try {
+    console.log('🔍 Checking if content types exist...');
     const response = await axios.get(`${BASE_URL}/v3/content_types`, { headers });
     const contentTypeUids = response.data.content_types?.map((ct: { uid: string }) => ct.uid) || [];
     
+    console.log('🔍 Found content types:', contentTypeUids);
+    
     const requiredTypes = ['site_configuration', 'home_page', 'blog_post', 'work_experience', 'portfolio_project'];
-    return requiredTypes.every(type => contentTypeUids.includes(type));
-  } catch {
+    const allExist = requiredTypes.every(type => contentTypeUids.includes(type));
+    
+    console.log('🔍 Required types:', requiredTypes);
+    console.log('🔍 All required types exist:', allExist);
+    
+    return allExist;
+  } catch (error) {
+    console.log('🔍 Error checking content types:', error);
     return false;
   }
 }

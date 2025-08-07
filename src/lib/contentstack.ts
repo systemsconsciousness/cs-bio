@@ -86,13 +86,25 @@ async function ensureSetup() {
 // API functions
 export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> => {
   try {
-    await ensureSetup();
+    console.log('🔍 Starting getSiteConfiguration check...');
+    
+    // Check if content types exist first
+    const contentTypesExist = await checkContentTypesExist();
+    console.log('🔍 Content types exist:', contentTypesExist);
+    
+    if (!contentTypesExist) {
+      console.log('🔍 Content types do not exist, running setup...');
+      await ensureSetup();
+      // After setup, no site configuration entry exists yet
+      return null;
+    }
     
     // Try both delivery API (via SDK) and management API approaches
     let siteConfig = null;
     
     // First try with the SDK (delivery API)
     try {
+      console.log('🔍 Attempting SDK query for site_configuration...');
       const query = stack.ContentType('site_configuration').Query();
       query.descending('updated_at');
       // Add cache-busting parameter
