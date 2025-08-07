@@ -63,11 +63,10 @@ export default function SetupPage() {
 
 
     // Wait for the data to propagate through Contentstack's systems
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Use Next.js router with force refresh
-    router.refresh();
-    router.push('/');
+    // Force a complete page reload to ensure all data is fresh
+    window.location.href = '/';
   };
 
   if (isLoading) {

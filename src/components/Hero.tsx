@@ -8,19 +8,44 @@ interface HeroProps {
 }
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
+  // Helper function to extract avatar URL from various Contentstack file field formats
+  const getAvatarUrl = (avatarPhoto: SiteConfiguration['avatar_photo']): string | null => {
+    if (!avatarPhoto) return null;
+    
+    // If it's a string (just the URL)
+    if (typeof avatarPhoto === 'string') {
+      return avatarPhoto;
+    }
+    
+    // If it's an array, get the first image
+    if (Array.isArray(avatarPhoto) && avatarPhoto.length > 0) {
+      return avatarPhoto[0].url || null;
+    }
+    
+    // If it's an object with url property
+    if (typeof avatarPhoto === 'object' && 'url' in avatarPhoto) {
+      return avatarPhoto.url || null;
+    }
+    
+    return null;
+  };
+
+  const avatarUrl = getAvatarUrl(siteConfig?.avatar_photo);
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="space-y-8">
           {/* Profile Image */}
           <div className="relative inline-block">
-            {siteConfig?.avatar_photo?.url ? (
+            {avatarUrl ? (
               <Image
-                src={siteConfig.avatar_photo.url}
-                alt={siteConfig.avatar_photo.title || siteConfig.owner_name || 'Profile'}
+                src={avatarUrl}
+                alt={siteConfig?.owner_name || 'Profile'}
                 width={128}
                 height={128}
                 className="w-32 h-32 rounded-full mx-auto mb-8 object-cover border-4 border-accent/20"
+                unoptimized={true}
               />
             ) : (
               <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">

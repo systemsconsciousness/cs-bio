@@ -15,17 +15,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "CS Bio - Full-Stack Developer",
-  description: "Full-stack developer passionate about creating innovative web experiences with modern technologies.",
-  keywords: ["developer", "portfolio", "full-stack", "React", "Next.js", "TypeScript"],
-  authors: [{ name: "CS" }],
-  openGraph: {
-    title: "CS Bio - Full-Stack Developer",
-    description: "Full-stack developer passionate about creating innovative web experiences with modern technologies.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let siteConfig = null;
+  try {
+    siteConfig = await getSiteConfiguration();
+  } catch (error) {
+    console.error('Error fetching site config for metadata:', error);
+  }
+
+  const siteName = siteConfig?.site_name || 'Personal Website';
+  const siteSubtitle = siteConfig?.site_subtitle || 'Welcome to my digital space';
+  const ownerName = siteConfig?.owner_name || 'Developer';
+  const bio = siteConfig?.bio || 'Welcome to my personal website where I share my work, thoughts, and journey.';
+  
+  const title = siteSubtitle ? `${siteName} - ${siteSubtitle}` : siteName;
+
+  return {
+    title,
+    description: bio,
+    keywords: ["developer", "portfolio", "full-stack", "React", "Next.js", "TypeScript"],
+    authors: [{ name: ownerName }],
+    openGraph: {
+      title,
+      description: bio,
+      type: "website",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

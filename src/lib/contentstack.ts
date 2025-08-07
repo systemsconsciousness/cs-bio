@@ -22,7 +22,12 @@ export interface SiteConfiguration {
   avatar_photo?: {
     url: string;
     title?: string;
-  };
+    filename?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+  }[] | string;
 }
 
 export interface HomePageContent {

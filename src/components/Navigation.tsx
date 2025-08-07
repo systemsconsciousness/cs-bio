@@ -23,12 +23,12 @@ const Navigation = ({ siteName }: NavigationProps) => {
   };
 
   const navItems = [
-    { href: '#home', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#work', label: 'Experience' },
-    { href: '#portfolio', label: 'Portfolio' },
-    { href: '#blog', label: 'Blog' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/#home', label: 'Home' },
+    { href: '/#about', label: 'About' },
+    { href: '/#work', label: 'Experience' },
+    { href: '/#portfolio', label: 'Portfolio' },
+    { href: '/blog', label: 'Blog' },
+    { href: '/#contact', label: 'Contact' },
   ];
 
   return (

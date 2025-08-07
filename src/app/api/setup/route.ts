@@ -92,7 +92,8 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if publish fails, the creation is what matters
     }
 
-    // Revalidate the home page to clear any cached data
+    // Revalidate pages to clear any cached data
+    revalidatePath('/', 'layout'); // Revalidate layout to update metadata
     revalidatePath('/');
     revalidatePath('/setup');
     
