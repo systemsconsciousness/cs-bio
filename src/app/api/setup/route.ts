@@ -133,17 +133,18 @@ export async function POST(request: NextRequest) {
         createData,
         { headers }
       );
-    } catch (error) {
+    } catch (error: unknown) {
+      const axiosError = error as any;
       console.error('Contentstack API Error Details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        url: error.config?.url,
-        method: error.config?.method
+        status: axiosError.response?.status,
+        statusText: axiosError.response?.statusText,
+        data: axiosError.response?.data,
+        url: axiosError.config?.url,
+        method: axiosError.config?.method
       });
       
       // If we have an avatar photo and the request failed, try without the photo
-      if (avatarPhotoData && error.response?.status === 422) {
+      if (avatarPhotoData && axiosError.response?.status === 422) {
         console.log('Retrying without avatar photo...');
         const createDataWithoutPhoto = {
           entry: {
