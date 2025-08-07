@@ -85,22 +85,14 @@ export async function POST(request: NextRequest) {
           const asset = uploadResponse.data.asset;
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
-          // Try different formats that Contentstack might expect for file fields
-          // Based on the error, let's try just the UID string
-          avatarPhotoData = asset.uid;
-          
-          // Option 2: Object with UID (failed)
-          // avatarPhotoData = {
-          //   uid: asset.uid
-          // };
-          
-          // Option 3: Full object format (to try if string fails)
-          // avatarPhotoData = {
-          //   uid: asset.uid,
-          //   url: asset.url,
-          //   filename: asset.filename,
-          //   content_type: asset.content_type
-          // };
+          // Store the full asset object so the frontend has access to the URL
+          avatarPhotoData = {
+            uid: asset.uid,
+            url: asset.url,
+            filename: asset.filename,
+            content_type: asset.content_type,
+            title: asset.title
+          };
           
           console.log('Avatar photo uploaded successfully:', asset.url);
           console.log('Using asset data format:', JSON.stringify(avatarPhotoData, null, 2));

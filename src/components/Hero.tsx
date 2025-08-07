@@ -12,7 +12,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const getAvatarUrl = (avatarPhoto: SiteConfiguration['avatar_photo']): string | null => {
     if (!avatarPhoto) return null;
     
-    // If it's a string (just the URL)
+    // If it's a string, assume it's already a full URL
     if (typeof avatarPhoto === 'string') {
       return avatarPhoto;
     }
