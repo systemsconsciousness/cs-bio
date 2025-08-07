@@ -425,49 +425,86 @@ async function createSampleContent() {
   const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
   const createdEntries: { uid: string; content_type: string }[] = [];
   
-  // Create Home Page
-  const homePageResult = await makeRequest(
-    'POST',
-    `${BASE_URL}/v3/content_types/home_page/entries`,
-    { entry: sampleContent.home_page }
-  );
-  if (homePageResult?.entry?.uid) {
-    createdEntries.push({ uid: homePageResult.entry.uid, content_type: 'home_page' });
+  // Helper function to check if content already exists
+  const checkContentExists = async (contentType: string, slug?: string) => {
+    try {
+      let query = '';
+      if (slug) {
+        query = `?query={"slug":"${slug}"}`;
+      }
+      const response = await makeRequest(
+        'GET',
+        `${BASE_URL}/v3/content_types/${contentType}/entries${query}`
+      );
+      return response?.entries && response.entries.length > 0;
+    } catch {
+      return false;
+    }
+  };
+  
+  // Create Home Page (check if exists first)
+  const homeExists = await checkContentExists('home_page');
+  if (!homeExists) {
+    const homePageResult = await makeRequest(
+      'POST',
+      `${BASE_URL}/v3/content_types/home_page/entries`,
+      { entry: sampleContent.home_page }
+    );
+    if (homePageResult?.entry?.uid) {
+      createdEntries.push({ uid: homePageResult.entry.uid, content_type: 'home_page' });
+    }
+    // Add delay to prevent rate limiting
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
   
-  // Create Blog Posts
+  // Create Blog Posts (check each slug)
   for (const blogPost of sampleContent.blog_posts) {
-    const result = await makeRequest(
-      'POST',
-      `${BASE_URL}/v3/content_types/blog_post/entries`,
-      { entry: blogPost }
-    );
-    if (result?.entry?.uid) {
-      createdEntries.push({ uid: result.entry.uid, content_type: 'blog_post' });
+    const exists = await checkContentExists('blog_post', blogPost.slug);
+    if (!exists) {
+      const result = await makeRequest(
+        'POST',
+        `${BASE_URL}/v3/content_types/blog_post/entries`,
+        { entry: blogPost }
+      );
+      if (result?.entry?.uid) {
+        createdEntries.push({ uid: result.entry.uid, content_type: 'blog_post' });
+      }
+      // Add delay to prevent rate limiting
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
   
-  // Create Work Experiences
+  // Create Work Experiences (check each title for uniqueness)
   for (const work of sampleContent.work_experiences) {
-    const result = await makeRequest(
-      'POST',
-      `${BASE_URL}/v3/content_types/work_experience/entries`,
-      { entry: work }
-    );
-    if (result?.entry?.uid) {
-      createdEntries.push({ uid: result.entry.uid, content_type: 'work_experience' });
+    const exists = await checkContentExists('work_experience', work.company || work.role);
+    if (!exists) {
+      const result = await makeRequest(
+        'POST',
+        `${BASE_URL}/v3/content_types/work_experience/entries`,
+        { entry: work }
+      );
+      if (result?.entry?.uid) {
+        createdEntries.push({ uid: result.entry.uid, content_type: 'work_experience' });
+      }
+      // Add delay to prevent rate limiting
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
   
-  // Create Portfolio Projects
+  // Create Portfolio Projects (check each slug for uniqueness)
   for (const project of sampleContent.portfolio_projects) {
-    const result = await makeRequest(
-      'POST',
-      `${BASE_URL}/v3/content_types/portfolio_project/entries`,
-      { entry: project }
-    );
-    if (result?.entry?.uid) {
-      createdEntries.push({ uid: result.entry.uid, content_type: 'portfolio_project' });
+    const exists = await checkContentExists('portfolio_project', project.slug);
+    if (!exists) {
+      const result = await makeRequest(
+        'POST',
+        `${BASE_URL}/v3/content_types/portfolio_project/entries`,
+        { entry: project }
+      );
+      if (result?.entry?.uid) {
+        createdEntries.push({ uid: result.entry.uid, content_type: 'portfolio_project' });
+      }
+      // Add delay to prevent rate limiting
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
 

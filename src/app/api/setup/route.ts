@@ -85,17 +85,11 @@ export async function POST(request: NextRequest) {
           const asset = uploadResponse.data.asset;
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
-          // Store the full asset object so the frontend has access to the URL
-          avatarPhotoData = {
-            uid: asset.uid,
-            url: asset.url,
-            filename: asset.filename,
-            content_type: asset.content_type,
-            title: asset.title
-          };
+          // Use just the UID string format (this worked before)
+          avatarPhotoData = asset.uid;
           
           console.log('Avatar photo uploaded successfully:', asset.url);
-          console.log('Using asset data format:', JSON.stringify(avatarPhotoData, null, 2));
+          console.log('Using asset UID:', avatarPhotoData);
         }
       } catch (uploadError) {
         console.warn('Failed to upload avatar photo:', uploadError);

@@ -1,6 +1,7 @@
 import { ArrowDown, Download } from 'lucide-react';
 import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
+import { useState, useEffect } from 'react';
 
 interface HeroProps {
   content: HomePageContent | null;
@@ -8,12 +9,20 @@ interface HeroProps {
 }
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+
   // Helper function to extract avatar URL from various Contentstack file field formats
   const getAvatarUrl = (avatarPhoto: SiteConfiguration['avatar_photo']): string | null => {
     if (!avatarPhoto) return null;
     
-    // If it's a string, assume it's already a full URL
+    // If it's a string, check if it's a UID or full URL
     if (typeof avatarPhoto === 'string') {
+      // If it starts with 'blt', it's a Contentstack asset UID
+      if (avatarPhoto.startsWith('blt')) {
+        return null; // Will be fetched via useEffect
+      }
+      // Otherwise assume it's already a full URL
       return avatarPhoto;
     }
     
@@ -30,7 +39,35 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
     return null;
   };
 
-  const avatarUrl = getAvatarUrl(siteConfig?.avatar_photo);
+  // Fetch avatar URL if we have a UID
+  useEffect(() => {
+    const fetchAvatarUrl = async () => {
+      if (!siteConfig?.avatar_photo || typeof siteConfig.avatar_photo !== 'string' || !siteConfig.avatar_photo.startsWith('blt')) {
+        const directUrl = getAvatarUrl(siteConfig?.avatar_photo);
+        setAvatarUrl(directUrl);
+        return;
+      }
+
+      setAvatarLoading(true);
+      try {
+        // Fetch asset details from Contentstack
+        const response = await fetch(`/api/asset/${siteConfig.avatar_photo}`);
+        if (response.ok) {
+          const asset = await response.json();
+          setAvatarUrl(asset.url);
+        } else {
+          setAvatarUrl(null);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch avatar URL:', error);
+        setAvatarUrl(null);
+      } finally {
+        setAvatarLoading(false);
+      }
+    };
+
+    fetchAvatarUrl();
+  }, [siteConfig?.avatar_photo]);
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
@@ -38,7 +75,13 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
         <div className="space-y-8">
           {/* Profile Image */}
           <div className="relative inline-block">
-            {avatarUrl ? (
+            {avatarLoading ? (
+              <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center animate-pulse">
+                <span className="text-accent-foreground text-4xl font-bold">
+                  {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
+                </span>
+              </div>
+            ) : avatarUrl ? (
               <Image
                 src={avatarUrl}
                 alt={siteConfig?.owner_name || 'Profile'}
