@@ -134,7 +134,17 @@ export async function POST(request: NextRequest) {
         { headers }
       );
     } catch (error: unknown) {
-      const axiosError = error as any;
+      const axiosError = error as { 
+        response?: { 
+          status?: number; 
+          statusText?: string; 
+          data?: unknown; 
+        }; 
+        config?: { 
+          url?: string; 
+          method?: string; 
+        }; 
+      };
       console.error('Contentstack API Error Details:', {
         status: axiosError.response?.status,
         statusText: axiosError.response?.statusText,
