@@ -160,12 +160,40 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
     
     console.log('🔍 SDK extracted config exists:', !!siteConfig);
     } catch (sdkError) {
-      console.log('🔍 SDK query failed, trying management API:', sdkError);
+      console.log('🔍 SDK query failed:', sdkError);
     }
     
-    // Log if SDK extraction failed but still attempt the result
+    // If SDK failed, try Management API as fallback
     if (!siteConfig) {
-      console.log('🔍 SDK query did not return site configuration, setup not completed');
+      console.log('🔍 SDK query did not return site configuration, trying Management API...');
+      try {
+        const managementApiUrl = `https://${process.env.CONTENTSTACK_API_HOST}/v3/content_types/site_configuration/entries`;
+        const response = await fetch(managementApiUrl, {
+          headers: {
+            'api_key': process.env.CONTENTSTACK_API_KEY!,
+            'authorization': process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('🔍 Management API response:', { 
+            entriesCount: data?.entries?.length || 0,
+            hasEntries: !!data?.entries
+          });
+          
+          if (data?.entries && data.entries.length > 0) {
+            siteConfig = data.entries[0];
+            console.log('🔍 Using Management API result');
+          }
+        } else {
+          console.log('🔍 Management API failed:', response.status, response.statusText);
+        }
+      } catch (managementError) {
+        console.log('🔍 Management API error:', managementError);
+      }
     }
     
     console.log('🔍 Final site config exists:', !!siteConfig);
@@ -183,8 +211,9 @@ export const getHomePageContent = async (): Promise<HomePageContent | null> => {
   try {
     await ensureSetup();
     const query = stack.ContentType('home_page').Query();
+    query.addParam('timestamp', Date.now().toString());
     const result = await query.toJSON().find();
-    return result[0]?.[0] || null;
+    return result[0]?.[0] || result[0] || null;
   } catch (error) {
     console.error('Error fetching home page content:', error);
     return null;
@@ -196,6 +225,7 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
     await ensureSetup();
     const query = stack.ContentType('blog_post').Query();
     query.descending('published_date');
+    query.addParam('timestamp', Date.now().toString());
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
@@ -222,6 +252,7 @@ export const getWorkExperiences = async (): Promise<WorkExperience[]> => {
     await ensureSetup();
     const query = stack.ContentType('work_experience').Query();
     query.descending('start_date');
+    query.addParam('timestamp', Date.now().toString());
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
@@ -235,6 +266,7 @@ export const getPortfolioProjects = async (): Promise<PortfolioProject[]> => {
     await ensureSetup();
     const query = stack.ContentType('portfolio_project').Query();
     query.descending('created_at');
+    query.addParam('timestamp', Date.now().toString());
     const result = await query.toJSON().find();
     return result[0] || [];
   } catch (error) {
