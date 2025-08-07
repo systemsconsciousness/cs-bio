@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowDown, Download } from 'lucide-react';
 import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
