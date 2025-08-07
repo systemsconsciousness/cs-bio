@@ -11,14 +11,21 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="space-y-8">
-          {/* Profile Image Placeholder */}
+          {/* Profile Image */}
           <div className="relative inline-block">
-            <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
-              <span className="text-accent-foreground text-4xl font-bold">
-                {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
-              </span>
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-background"></div>
+            {siteConfig?.avatar_photo?.url ? (
+              <img
+                src={siteConfig.avatar_photo.url}
+                alt={siteConfig.avatar_photo.title || siteConfig.owner_name || 'Profile'}
+                className="w-32 h-32 rounded-full mx-auto mb-8 object-cover border-4 border-accent/20"
+              />
+            ) : (
+              <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
+                <span className="text-accent-foreground text-4xl font-bold">
+                  {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Hero Text */}

@@ -91,6 +91,16 @@ const contentTypes = {
           multiline: true
         },
         unique: false
+      },
+      {
+        display_name: "Avatar Photo",
+        uid: "avatar_photo",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload a profile photo (optional)",
+          rich_text_type: "standard"
+        },
+        unique: false
       }
     ]
   },

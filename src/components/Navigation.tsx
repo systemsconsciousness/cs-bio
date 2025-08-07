@@ -4,7 +4,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 
-const Navigation = () => {
+interface NavigationProps {
+  siteName?: string;
+}
+
+const Navigation = ({ siteName }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
@@ -33,7 +37,7 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="font-bold text-xl text-foreground hover:text-accent transition-colors">
-            CS
+            {siteName || 'CS'}
           </Link>
 
           {/* Desktop Navigation */}

@@ -19,6 +19,10 @@ export interface SiteConfiguration {
   owner_name: string;
   owner_email: string;
   bio: string;
+  avatar_photo?: {
+    url: string;
+    title?: string;
+  };
 }
 
 export interface HomePageContent {
