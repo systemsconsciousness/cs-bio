@@ -12,8 +12,16 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const getAvatarUrl = (avatarPhoto: SiteConfiguration['avatar_photo']): string | null => {
     if (!avatarPhoto) return null;
     
-    // If it's a string, assume it's already a full URL
+    // If it's a string, check if it's a UID or full URL
     if (typeof avatarPhoto === 'string') {
+      // If it starts with 'blt', it's a Contentstack asset UID - construct delivery URL
+      if (avatarPhoto.startsWith('blt')) {
+        // For now, return null as we can't construct the URL without timestamp
+        // This will show the fallback initials until we implement proper asset fetching
+        console.log('Avatar is UID format:', avatarPhoto, '- showing fallback for now');
+        return null;
+      }
+      // Otherwise assume it's already a full URL
       return avatarPhoto;
     }
     

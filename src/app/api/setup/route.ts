@@ -85,16 +85,11 @@ export async function POST(request: NextRequest) {
           const asset = uploadResponse.data.asset;
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
-          // Store the full asset object with URL so frontend can display it immediately
-          avatarPhotoData = {
-            uid: asset.uid,
-            url: asset.url,
-            filename: asset.filename,
-            title: asset.title
-          };
+          // Try the UID-only format first (this often works for file fields)
+          avatarPhotoData = asset.uid;
           
           console.log('Avatar photo uploaded successfully:', asset.url);
-          console.log('Using asset object:', JSON.stringify(avatarPhotoData, null, 2));
+          console.log('Using asset UID:', avatarPhotoData);
         }
       } catch (uploadError) {
         console.warn('Failed to upload avatar photo:', uploadError);
@@ -148,22 +143,37 @@ export async function POST(request: NextRequest) {
       if (avatarPhotoData && axiosError.response?.status === 422) {
         console.log('First photo format failed, trying alternatives...');
         
-        // Get the asset UID from the form data for alternative attempts
-        const uploadedAssetResponse = await axios.get(
-          `${BASE_URL}/v3/assets?query={"uid":"${avatarPhotoData}"}`,
-          { headers: { 
-            api_key: process.env.CONTENTSTACK_API_KEY!,
-            authorization: process.env.CONTENTSTACK_MANAGEMENT_TOKEN!,
-            'Content-Type': 'application/json'
-          }}
-        );
+        console.log('UID format failed, trying alternative formats...');
         
-        if (uploadedAssetResponse.data?.assets?.[0]) {
-          const asset = uploadedAssetResponse.data.assets[0];
+        // Since we have the asset UID already, let's try different formats
+        const assetUid = avatarPhotoData;
+        
+        // Try format 2: Array with UID
+        console.log('Trying array format...');
+        let createDataFormat2 = {
+          entry: {
+            title: 'Site Configuration',
+            site_name: siteName,
+            site_subtitle: siteSubtitle || '',
+            owner_name: ownerName,
+            owner_email: ownerEmail || '',
+            bio: bio || '',
+            avatar_photo: [assetUid]  // Array format
+          }
+        };
+        
+        try {
+          createResponse = await axios.post(
+            `${BASE_URL}/v3/content_types/site_configuration/entries`,
+            createDataFormat2,
+            { headers }
+          );
+          console.log('Successfully created entry with array format!');
+        } catch {
+          console.log('Array format also failed, trying simple object...');
           
-          // Try format 2: Full object
-          console.log('Trying full object format...');
-          const createDataFormat2 = {
+          // Try format 3: Simple object with just UID
+          const createDataFormat3 = {
             entry: {
               title: 'Site Configuration',
               site_name: siteName,
@@ -171,24 +181,19 @@ export async function POST(request: NextRequest) {
               owner_name: ownerName,
               owner_email: ownerEmail || '',
               bio: bio || '',
-              avatar_photo: {
-                uid: asset.uid,
-                url: asset.url,
-                filename: asset.filename,
-                content_type: asset.content_type
-              }
+              avatar_photo: { uid: assetUid }
             }
           };
           
           try {
             createResponse = await axios.post(
               `${BASE_URL}/v3/content_types/site_configuration/entries`,
-              createDataFormat2,
+              createDataFormat3,
               { headers }
             );
-            console.log('Successfully created entry with full object format!');
+            console.log('Successfully created entry with simple object format!');
           } catch {
-            console.log('Full object format also failed, creating without photo...');
+            console.log('All photo formats failed, creating without photo...');
             const createDataWithoutPhoto = {
               entry: {
                 title: 'Site Configuration',
@@ -208,26 +213,6 @@ export async function POST(request: NextRequest) {
             
             console.log('Successfully created entry without photo. Photo format issue confirmed.');
           }
-        } else {
-          console.log('Could not retrieve asset details, creating without photo...');
-          const createDataWithoutPhoto = {
-            entry: {
-              title: 'Site Configuration',
-              site_name: siteName,
-              site_subtitle: siteSubtitle || '',
-              owner_name: ownerName,
-              owner_email: ownerEmail || '',
-              bio: bio || ''
-            }
-          };
-          
-          createResponse = await axios.post(
-            `${BASE_URL}/v3/content_types/site_configuration/entries`,
-            createDataWithoutPhoto,
-            { headers }
-          );
-          
-          console.log('Successfully created entry without photo.');
         }
       } else {
         throw error;
@@ -242,7 +227,9 @@ export async function POST(request: NextRequest) {
         entry: {
           environments: [ENVIRONMENT || 'production'],
           locales: ['en-us']
-        }
+        },
+        // Include references to publish associated assets
+        publish_with_reference: true
       };
 
       await axios.post(
@@ -250,6 +237,8 @@ export async function POST(request: NextRequest) {
         publishData,
         { headers }
       );
+      
+      console.log('Site configuration entry published successfully with references');
 
     } catch (publishError) {
       console.warn('Failed to publish entry, but creation succeeded:', publishError);
