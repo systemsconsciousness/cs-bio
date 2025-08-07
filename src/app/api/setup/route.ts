@@ -221,6 +221,9 @@ export async function POST(request: NextRequest) {
 
     const entryUid = createResponse.data.entry.uid;
 
+    // Add a brief delay to ensure asset attachment has propagated
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // Publish the new entry so it's available via delivery API
     try {
       const publishData = {
