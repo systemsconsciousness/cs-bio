@@ -4,6 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import WelcomeSetup from '@/components/WelcomeSetup';
 
+// Force this page to be dynamic (not cached)
+export const dynamic = 'force-dynamic';
+
 interface SetupFormData {
   ownerName: string;
   ownerEmail: string;
@@ -60,13 +63,14 @@ export default function SetupPage() {
       throw new Error(errorData.error || 'Setup failed');
     }
 
-        console.log('✅ Site configuration created successfully');
+    console.log('✅ Site configuration created successfully');
 
     // Wait for the data to propagate through Contentstack's systems
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Force a hard navigation to ensure the page reloads completely
-    window.location.href = '/';
+    // Use Next.js router with force refresh
+    router.refresh();
+    router.push('/');
   };
 
   if (isLoading) {

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import axios from 'axios';
+
+// Force this API route to be dynamic (not cached)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,6 +98,10 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if publish fails, the creation is what matters
     }
 
+    // Revalidate the home page to clear any cached data
+    revalidatePath('/');
+    revalidatePath('/setup');
+    
     const response = NextResponse.json({ 
       success: true,
       timestamp: Date.now()

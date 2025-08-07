@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getSiteConfiguration } from '@/lib/contentstack';
 
+// Force this API route to be dynamic (not cached)
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     console.log('🔍 === Setup Status Check Starting ===');

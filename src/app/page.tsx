@@ -12,6 +12,11 @@ import {
   getWorkExperiences, 
   getPortfolioProjects 
 } from '@/lib/contentstack';
+import { redirect } from 'next/navigation';
+
+// Force this page to be dynamic (not cached)
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Home() {
   // Check if site configuration entry exists
@@ -24,7 +29,13 @@ export default async function Home() {
     console.error('🔍 Home page - error fetching site config:', error);
   }
   
-  // Fetch all content from Contentstack (even if siteConfig is null for graceful fallback)
+  // If no site config exists, redirect to setup page
+  if (!siteConfig) {
+    console.log('🔄 No site configuration found, redirecting to setup page');
+    redirect('/setup');
+  }
+  
+  // Fetch all content from Contentstack
   const [homeContent, blogPosts, workExperiences, portfolioProjects] = await Promise.all([
     getHomePageContent(),
     getBlogPosts(),
@@ -33,15 +44,13 @@ export default async function Home() {
   ]);
 
   return (
-    <SetupGuard siteConfigExists={!!siteConfig}>
-      <div className="min-h-screen">
-        <Hero content={homeContent} siteConfig={siteConfig} />
-        <About content={homeContent} siteConfig={siteConfig} />
-        <WorkExperience experiences={workExperiences} />
-        <Portfolio projects={portfolioProjects} />
-        <Blog posts={blogPosts} />
-        <Contact content={homeContent} />
-      </div>
-    </SetupGuard>
+    <div className="min-h-screen">
+      <Hero content={homeContent} siteConfig={siteConfig} />
+      <About content={homeContent} siteConfig={siteConfig} />
+      <WorkExperience experiences={workExperiences} />
+      <Portfolio projects={portfolioProjects} />
+      <Blog posts={blogPosts} />
+      <Contact content={homeContent} />
+    </div>
   );
 }
