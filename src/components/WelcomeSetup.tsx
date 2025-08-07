@@ -25,15 +25,24 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.ownerName.trim() || !formData.siteName.trim()) {
+      setError('Please fill in your name and site name');
+      return;
+    }
+
     setIsSubmitting(true);
+    setError(null);
 
     try {
       await onComplete(formData);
     } catch (error) {
       console.error('Setup failed:', error);
+      setError('Setup failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -65,6 +74,11 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
 
         {/* Setup Form */}
         <div className="bg-card border border-border rounded-xl shadow-lg p-8">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Personal Info Section */}
             <div>

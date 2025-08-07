@@ -17,8 +17,8 @@ export default async function Home() {
   // Check if initial setup is complete
   const siteConfig = await getSiteConfiguration();
   
-  // If setup is not completed, redirect to setup page
-  if (!siteConfig?.setup_completed) {
+  // If setup is not completed or site config doesn't exist, redirect to setup page
+  if (!siteConfig || !siteConfig.setup_completed) {
     redirect('/setup');
   }
 
