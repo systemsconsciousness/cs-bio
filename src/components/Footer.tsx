@@ -97,7 +97,7 @@ const Footer = () => {
             © {new Date().getFullYear()} CS Bio. All rights reserved.
           </p>
           <p className="text-muted-foreground text-sm mt-2 sm:mt-0">
-            Built with Next.js &amp; Contentstack
+            Built with Next.js &amp; Contentstack • Powered by Launch
           </p>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { getSiteConfiguration } from "@/lib/contentstack";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,11 +27,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let siteConfig = null;
+  try {
+    siteConfig = await getSiteConfiguration();
+  } catch (error) {
+    console.error('Error fetching site config in layout:', error);
+  }
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -39,7 +47,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Navigation />
+        <Navigation siteName={siteConfig?.site_name} />
         <main className="flex-grow pt-16">
           {children}
         </main>

@@ -41,16 +41,16 @@ A modern, responsive personal portfolio website built with Next.js 15, Tailwind 
 - **CMS:** Contentstack
 - **Icons:** Lucide React
 - **TypeScript:** Full type safety
-- **Deployment:** Vercel-ready
+- **Deployment:** Contentstack Launch-ready
 
 ## 🚀 One-Click Deployment
 
 This portfolio is designed for **instant deployment** - no local setup required!
 
-### Deploy to Vercel (Recommended)
+### Deploy to Contentstack Launch (Recommended)
 
-1. **Click "Deploy to Vercel"** and connect your Contentstack credentials
-2. **Add Environment Variables** in the Vercel dashboard:
+1. **Deploy to Contentstack Launch** and connect your repository
+2. **Add Environment Variables** in the Launch dashboard:
    ```env
    CONTENTSTACK_API_HOST=api.contentstack.io
    CONTENTSTACK_CDN=cdn.contentstack.com/v3
@@ -141,15 +141,15 @@ Update your content through the Contentstack dashboard, and it will automaticall
 
 ## Deployment
 
-### Deploy to Vercel
+### Deploy to Contentstack Launch
 
-1. Connect your GitHub repository to Vercel
-2. Add your environment variables in the Vercel dashboard
+1. Connect your GitHub repository to Contentstack Launch
+2. Add your environment variables in the Launch dashboard
 3. Deploy!
 
 ### Other Platforms
 
-The site is a standard Next.js application and can be deployed to any platform that supports Node.js.
+The site is a standard Next.js application and can be deployed to any platform that supports Node.js, including Vercel, Netlify, or other hosting providers.
 
 ## Scripts
 
