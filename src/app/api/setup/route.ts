@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
               { headers }
             );
             console.log('Successfully created entry with full object format!');
-          } catch (_secondError) {
+          } catch {
             console.log('Full object format also failed, creating without photo...');
             const createDataWithoutPhoto = {
               entry: {
