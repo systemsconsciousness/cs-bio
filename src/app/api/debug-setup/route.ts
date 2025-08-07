@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSiteConfiguration } from '@/lib/contentstack';
+import { getSiteConfiguration, SiteConfiguration } from '@/lib/contentstack';
 import { checkContentTypesExist } from '@/lib/contentstack-setup';
 
 export async function GET() {
@@ -15,7 +15,7 @@ export async function GET() {
         ENVIRONMENT: process.env.CONTENTSTACK_ENVIRONMENT || 'production'
       },
       contentTypesExist: false,
-      siteConfig: null as any,
+      siteConfig: null as SiteConfiguration | null,
       siteConfigExists: false,
       setupCompleted: false,
       logs: [] as string[]
