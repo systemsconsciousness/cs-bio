@@ -174,56 +174,58 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
                   />
                 </div>
               </div>
+            </div>
 
-              {/* Profile Photo Upload */}
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Profile Photo (Optional)
-                </label>
-                <div className="flex items-center gap-4">
-                  {photoPreview ? (
-                    <div className="relative">
-                      <Image
-                        src={photoPreview}
-                        alt="Profile preview"
-                        width={80}
-                        height={80}
-                        className="w-20 h-20 rounded-full object-cover border-2 border-accent/20"
-                        unoptimized={true}
-                      />
-                      <button
-                        type="button"
-                        onClick={removePhoto}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/5 rounded-full flex items-center justify-center">
-                      <Camera className="w-8 h-8 text-accent/50" />
-                    </div>
-                  )}
-                  
-                  <div className="flex-1">
-                    <input
-                      type="file"
-                      id="avatarPhoto"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      className="hidden"
+            {/* Profile Photo Section */}
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
+                <Camera className="w-5 h-5 mr-2 text-accent" />
+                Profile Photo
+              </h2>
+              
+              <div className="flex items-center gap-6">
+                {photoPreview ? (
+                  <div className="relative">
+                    <Image
+                      src={photoPreview}
+                      alt="Profile preview"
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-accent/20"
+                      unoptimized={true}
                     />
-                    <label
-                      htmlFor="avatarPhoto"
-                      className="inline-flex items-center px-4 py-2 bg-accent text-accent-foreground rounded-lg cursor-pointer hover:bg-accent/90 transition-colors"
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors"
                     >
-                      <Camera className="w-4 h-4 mr-2" />
-                      {photoPreview ? 'Change Photo' : 'Upload Photo'}
-                    </label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      JPG, PNG or GIF. Max 5MB.
-                    </p>
+                      ×
+                    </button>
                   </div>
+                ) : (
+                  <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/5 rounded-full flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-accent/50" />
+                  </div>
+                )}
+                
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    id="avatarPhoto"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="avatarPhoto"
+                    className="inline-flex items-center px-4 py-2 bg-accent text-accent-foreground rounded-lg cursor-pointer hover:bg-accent/90 transition-colors"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Upload a profile photo (optional). JPG, PNG or GIF. Max 5MB.
+                  </p>
                 </div>
               </div>
             </div>

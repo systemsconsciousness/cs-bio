@@ -82,12 +82,9 @@ export async function POST(request: NextRequest) {
         );
 
         if (uploadResponse.data?.asset) {
-          avatarPhotoData = {
-            url: uploadResponse.data.asset.url,
-            title: uploadResponse.data.asset.title,
-            filename: uploadResponse.data.asset.filename
-          };
-          console.log('Avatar photo uploaded successfully:', avatarPhotoData.url);
+          // Contentstack expects the asset UID for file fields
+          avatarPhotoData = uploadResponse.data.asset.uid;
+          console.log('Avatar photo uploaded successfully:', uploadResponse.data.asset.url);
         }
       } catch (uploadError) {
         console.warn('Failed to upload avatar photo:', uploadError);

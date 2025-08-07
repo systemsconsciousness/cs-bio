@@ -23,10 +23,12 @@ export interface SiteConfiguration {
     url: string;
     title?: string;
     filename?: string;
+    uid?: string;
   } | {
     url: string;
     title?: string;
     filename?: string;
+    uid?: string;
   }[] | string;
 }
 
