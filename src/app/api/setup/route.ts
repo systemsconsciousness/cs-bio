@@ -230,13 +230,11 @@ export async function POST(request: NextRequest) {
         entry: {
           environments: [ENVIRONMENT || 'production'],
           locales: ['en-us']
-        },
-        // Include references to publish associated assets
-        publish_with_reference: true
+        }
       };
 
       await axios.post(
-        `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}/publish`,
+        `${BASE_URL}/v3/content_types/site_configuration/entries/${entryUid}/publish?publish_with_reference=true`,
         publishData,
         { headers }
       );
