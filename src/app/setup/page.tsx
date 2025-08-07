@@ -13,7 +13,7 @@ interface SetupFormData {
   siteName: string;
   siteSubtitle: string;
   bio: string;
-  avatarPhoto?: File;
+  avatarPhoto?: File | null;
 }
 
 export default function SetupPage() {

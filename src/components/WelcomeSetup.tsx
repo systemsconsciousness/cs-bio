@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { User, Globe, FileText, Sparkles, Camera } from 'lucide-react';
 
 interface SetupFormData {
@@ -9,7 +10,7 @@ interface SetupFormData {
   siteName: string;
   siteSubtitle: string;
   bio: string;
-  avatarPhoto?: File;
+  avatarPhoto?: File | null;
 }
 
 interface WelcomeSetupProps {
@@ -182,10 +183,13 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
                 <div className="flex items-center gap-4">
                   {photoPreview ? (
                     <div className="relative">
-                      <img
+                      <Image
                         src={photoPreview}
                         alt="Profile preview"
+                        width={80}
+                        height={80}
                         className="w-20 h-20 rounded-full object-cover border-2 border-accent/20"
+                        unoptimized={true}
                       />
                       <button
                         type="button"
