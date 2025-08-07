@@ -51,9 +51,11 @@ export default function SetupPage() {
       throw new Error(errorData.error || 'Setup failed');
     }
 
-    // Redirect to home page after successful setup
-    router.push('/');
-    router.refresh(); // Force refresh to reload the page with new data
+    // Wait a moment for the data to propagate, then redirect
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Force a hard navigation to ensure the page reloads completely
+    window.location.href = '/';
   };
 
   if (isLoading) {

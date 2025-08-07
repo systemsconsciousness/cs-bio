@@ -26,6 +26,7 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +41,11 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
 
     try {
       await onComplete(formData);
+      setIsSuccess(true);
+      // Keep submitting state active until redirect happens
     } catch (error) {
       console.error('Setup failed:', error);
       setError('Setup failed. Please try again.');
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -77,6 +79,11 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
               {error}
+            </div>
+          )}
+          {isSuccess && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+              Setup completed successfully! Redirecting to your site...
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -198,7 +205,7 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
                 {isSubmitting ? (
                   <span className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2"></div>
-                    Setting up your site...
+                    {isSuccess ? 'Launching your site...' : 'Setting up your site...'}
                   </span>
                 ) : (
                   'Complete Setup & Launch Site!'
