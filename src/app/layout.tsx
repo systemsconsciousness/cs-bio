@@ -67,7 +67,7 @@ export default async function RootLayout({
         <main className="flex-grow pt-16">
           {children}
         </main>
-        <Footer />
+        <Footer siteConfig={siteConfig} />
       </body>
     </html>
   );

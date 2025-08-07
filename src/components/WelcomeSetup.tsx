@@ -359,7 +359,7 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
                   onChange={handleChange}
                   rows={4}
                   className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-colors resize-none"
-                  placeholder="I&apos;m a passionate developer who loves creating amazing digital experiences. I specialize in..."
+                  placeholder="Just another vibe coder looking for a token."
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   This will appear in your hero section and about page

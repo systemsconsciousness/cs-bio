@@ -1,6 +1,11 @@
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import { SiteConfiguration } from '@/lib/contentstack';
 
-const Footer = () => {
+interface FooterProps {
+  siteConfig?: SiteConfiguration | null;
+}
+
+const Footer = ({ siteConfig }: FooterProps) => {
   const socialLinks = [
     {
       href: 'mailto:hello@example.com',
@@ -30,9 +35,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="font-bold text-lg mb-4">CS Bio</h3>
+            <h3 className="font-bold text-lg mb-4">{siteConfig?.site_name || 'Personal Website'}</h3>
             <p className="text-muted-foreground mb-4">
-              Full-stack developer passionate about creating innovative web experiences.
+              {siteConfig?.bio || 'Just another vibe coder looking for a token.'}
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((link) => (
@@ -94,7 +99,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} CS Bio. All rights reserved.
+            © {new Date().getFullYear()} {siteConfig?.site_name || 'Personal Website'}. All rights reserved.
           </p>
           <p className="text-muted-foreground text-sm mt-2 sm:mt-0">
             Built with Next.js &amp; Contentstack • Powered by Launch

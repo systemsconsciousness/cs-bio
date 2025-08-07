@@ -85,6 +85,23 @@ export async function POST(request: NextRequest) {
           const asset = uploadResponse.data.asset;
           console.log('Full asset response:', JSON.stringify(asset, null, 2));
           
+          // IMMEDIATELY publish the asset so it's available via delivery API
+          try {
+            await axios.post(
+              `${BASE_URL}/v3/assets/${asset.uid}/publish`,
+              {
+                asset: {
+                  environments: [ENVIRONMENT || 'production'],
+                  locales: ['en-us']
+                }
+              },
+              { headers }
+            );
+            console.log('Asset published successfully');
+          } catch (assetPublishError) {
+            console.warn('Failed to publish asset:', assetPublishError);
+          }
+          
           // Try the UID-only format first (this often works for file fields)
           avatarPhotoData = asset.uid;
           
@@ -221,8 +238,8 @@ export async function POST(request: NextRequest) {
 
     const entryUid = createResponse.data.entry.uid;
 
-    // Add a brief delay to ensure asset attachment has propagated
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Add a longer delay to ensure asset publishing and attachment has propagated
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Publish the new entry so it's available via delivery API
     try {
