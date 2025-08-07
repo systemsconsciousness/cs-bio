@@ -60,8 +60,37 @@ export default function SetupPage() {
       throw new Error(errorData.error || 'Setup failed');
     }
 
-    // Wait a moment for the data to propagate, then redirect
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait longer for the data to propagate through Contentstack's CDN
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Try to verify the entry exists before redirecting
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    while (retryCount < maxRetries) {
+      try {
+        const checkResponse = await fetch(`/api/setup/status?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        const checkData = await checkResponse.json();
+        
+        if (checkData.setupCompleted) {
+          console.log('✅ Setup verified, redirecting...');
+          break;
+        }
+        
+        console.log(`⏳ Setup not yet detected, retry ${retryCount + 1}/${maxRetries}`);
+        retryCount++;
+        
+        if (retryCount < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      } catch (error) {
+        console.error('Error verifying setup:', error);
+        break;
+      }
+    }
     
     // Force a hard navigation to ensure the page reloads completely
     window.location.href = '/';
