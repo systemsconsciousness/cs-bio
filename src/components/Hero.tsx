@@ -16,10 +16,10 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
     if (typeof avatarPhoto === 'string') {
       // If it starts with 'blt', it's a Contentstack asset UID - construct delivery URL
       if (avatarPhoto.startsWith('blt')) {
-        // For now, return null as we can't construct the URL without timestamp
-        // This will show the fallback initials until we implement proper asset fetching
-        console.log('Avatar is UID format:', avatarPhoto, '- showing fallback for now');
-        return null;
+        // Construct the delivery URL using Contentstack's asset delivery pattern
+        const stackApiKey = process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY || 'bltf30bb27542f99789'; // fallback from logs
+        const cdnHost = 'images.contentstack.io';
+        return `https://${cdnHost}/v3/assets/${stackApiKey}/${avatarPhoto}/download`;
       }
       // Otherwise assume it's already a full URL
       return avatarPhoto;
