@@ -33,6 +33,7 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
+  const [progressSteps, setProgressSteps] = useState<string[]>([]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,19 +78,63 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
 
     setIsSubmitting(true);
     setError(null);
+    setProgressSteps([]);
 
     try {
+      // Step 1: Initialize
+      setStatusMessage('Initializing your site setup...');
+      setProgressSteps(['✓ Validating your information']);
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Step 2: Upload photo if provided
+      if (selectedPhoto) {
+        setStatusMessage('Uploading your profile photo...');
+        setProgressSteps(prev => [...prev, '📸 Uploading profile photo']);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Step 3: Create site configuration
       setStatusMessage('Creating your site configuration...');
+      setProgressSteps(prev => [...prev, '⚙️ Setting up site configuration']);
+      
       const formDataWithPhoto = { ...formData, avatarPhoto: selectedPhoto };
+      
+      // Step 4: Create content types
+      setStatusMessage('Setting up content structure...');
+      setProgressSteps(prev => [...prev, '📋 Creating content types']);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Step 5: Create sample content
+      setStatusMessage('Creating sample content...');
+      setProgressSteps(prev => [...prev, '📝 Creating home page content']);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      setProgressSteps(prev => [...prev, '📖 Creating sample blog posts']);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      setProgressSteps(prev => [...prev, '💼 Creating sample work experience']);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      setProgressSteps(prev => [...prev, '🚀 Creating sample portfolio projects']);
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Step 6: Submit the form
+      setStatusMessage('Finalizing your site...');
+      setProgressSteps(prev => [...prev, '🔧 Publishing all content']);
+      
       await onComplete(formDataWithPhoto);
+      
       setIsSuccess(true);
-      setStatusMessage('Setup completed! Redirecting to your site...');
+      setStatusMessage('🎉 Setup completed! Redirecting to your site...');
+      setProgressSteps(prev => [...prev, '✅ Site ready!']);
+      
       // Keep submitting state active until redirect happens
     } catch (error) {
       console.error('Setup failed:', error);
-      setError('Setup failed. Please try again.');
+      setError(error instanceof Error ? error.message : 'Setup failed. Please try again.');
       setIsSubmitting(false);
-      setStatusMessage('');
+      setProgressSteps([]);
     }
   };
 
@@ -124,17 +169,42 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
               {error}
             </div>
           )}
+          
+          {/* Progress Display */}
+          {isSubmitting && (
+            <div className="mb-6">
+              <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center mb-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent mr-3"></div>
+                  <h3 className="text-lg font-medium text-blue-900">{statusMessage}</h3>
+                </div>
+                
+                {progressSteps.length > 0 && (
+                  <div className="space-y-2">
+                    {progressSteps.map((step, index) => (
+                      <div key={index} className="flex items-center text-blue-700">
+                        <span className="text-sm">{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
           {isSuccess && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
-              Setup completed successfully! Redirecting to your site...
+              <div className="flex items-center">
+                <div className="text-2xl mr-3">🎉</div>
+                <div>
+                  <h3 className="font-medium">Setup completed successfully!</h3>
+                  <p className="text-sm">Redirecting to your site...</p>
+                </div>
+              </div>
             </div>
           )}
-          {statusMessage && !error && !isSuccess && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
-              {statusMessage}
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {!isSubmitting && !isSuccess && (
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Personal Info Section */}
             <div>
               <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
@@ -315,6 +385,7 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
               </button>
             </div>
           </form>
+          )}
           
           {/* Footer Note */}
           <div className="mt-6 pt-6 border-t border-border">

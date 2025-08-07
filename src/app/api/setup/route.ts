@@ -82,9 +82,13 @@ export async function POST(request: NextRequest) {
         );
 
         if (uploadResponse.data?.asset) {
-          // Contentstack expects the asset UID for file fields
-          avatarPhotoData = uploadResponse.data.asset.uid;
-          console.log('Avatar photo uploaded successfully:', uploadResponse.data.asset.url);
+          const asset = uploadResponse.data.asset;
+          console.log('Full asset response:', JSON.stringify(asset, null, 2));
+          
+          // Try the asset UID format that Contentstack expects for file fields
+          avatarPhotoData = [asset.uid];  // Try as array
+          console.log('Avatar photo uploaded successfully:', asset.url);
+          console.log('Using asset UID array:', [asset.uid]);
         }
       } catch (uploadError) {
         console.warn('Failed to upload avatar photo:', uploadError);
@@ -104,6 +108,8 @@ export async function POST(request: NextRequest) {
         ...(avatarPhotoData && { avatar_photo: avatarPhotoData })
       }
     };
+
+    console.log('Creating site configuration with data:', JSON.stringify(createData, null, 2));
 
     const createResponse = await axios.post(
       `${BASE_URL}/v3/content_types/site_configuration/entries`,
