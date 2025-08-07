@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
         
         // Try format 2: Array with UID
         console.log('Trying array format...');
-        let createDataFormat2 = {
+        const createDataFormat2 = {
           entry: {
             title: 'Site Configuration',
             site_name: siteName,
