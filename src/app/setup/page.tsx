@@ -32,10 +32,7 @@ export default function SetupPage() {
         });
         const data = await response.json();
         
-        console.log('🔍 Setup page - status response:', data);
-        
         if (data.setupCompleted) {
-          console.log('🔄 Setup already completed, redirecting to home');
           router.push('/');
           return;
         }
@@ -63,7 +60,7 @@ export default function SetupPage() {
       throw new Error(errorData.error || 'Setup failed');
     }
 
-    console.log('✅ Site configuration created successfully');
+
 
     // Wait for the data to propagate through Contentstack's systems
     await new Promise(resolve => setTimeout(resolve, 2000));

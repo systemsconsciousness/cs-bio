@@ -86,14 +86,10 @@ async function ensureSetup() {
 // API functions
 export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> => {
   try {
-    console.log('🔍 Starting getSiteConfiguration check...');
-    
     // Check if content types exist first
     const contentTypesExist = await checkContentTypesExist();
-    console.log('🔍 Content types exist:', contentTypesExist);
     
     if (!contentTypesExist) {
-      console.log('🔍 Content types do not exist, running setup...');
       await ensureSetup();
       // After setup, no site configuration entry exists yet
       return null;
@@ -104,68 +100,34 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
     
     // First try with the SDK (delivery API)
     try {
-      console.log('🔍 Attempting SDK query for site_configuration...');
       const query = stack.ContentType('site_configuration').Query();
       query.descending('updated_at');
-      // Add cache-busting parameter
       query.addParam('timestamp', Date.now().toString());
       const result = await query.toJSON().find();
       
-          console.log('🔍 SDK query result structure:', Array.isArray(result) ? 'array' : typeof result, 'length:', result?.length || result?.entries?.length || 0);
-    
-    // Check various possible data structures
-          console.log('🔍 SDK result structure analysis:', {
-      isArray: Array.isArray(result),
-      length: result?.length,
-      firstItemType: result?.[0] ? typeof result[0] : 'none',
-      firstItemIsArray: Array.isArray(result?.[0]),
-      firstItemLength: Array.isArray(result?.[0]) ? result[0].length : 'N/A',
-      firstItemKeys: result?.[0] && typeof result[0] === 'object' ? Object.keys(result[0]) : 'N/A',
-      hasEntries: !!result?.entries,
-      entriesLength: result?.entries?.length
-    });
-    
-    // Log the actual first item to see what we're dealing with
-    if (result && result.length > 0) {
-      console.log('🔍 First item raw value:', JSON.stringify(result[0], null, 2));
-    }
-    
-    if (Array.isArray(result) && result.length > 0) {
-      if (Array.isArray(result[0])) {
-        // Nested array structure: [[entry]] or [[]]
-        if (result[0].length > 0 && result[0][0] && typeof result[0][0] === 'object' && Object.keys(result[0][0]).length > 0) {
-          siteConfig = result[0][0];
-          console.log('🔍 Using nested array structure with valid entry');
-        } else {
-          console.log('🔍 Nested array is empty or contains invalid entry');
+      // Handle various possible data structures from Contentstack SDK
+      if (Array.isArray(result) && result.length > 0) {
+        if (Array.isArray(result[0])) {
+          // Nested array structure: [[entry]]
+          if (result[0].length > 0 && result[0][0] && typeof result[0][0] === 'object' && Object.keys(result[0][0]).length > 0) {
+            siteConfig = result[0][0];
+          }
+        } else if (result[0] && typeof result[0] === 'object' && Object.keys(result[0]).length > 0) {
+          // Direct array structure: [entry]
+          siteConfig = result[0];
         }
-      } else if (result[0] && typeof result[0] === 'object' && Object.keys(result[0]).length > 0) {
-        // Direct array structure: [entry] - but make sure it's not an empty object
-        siteConfig = result[0];
-        console.log('🔍 Using direct array structure with valid entry');
-      } else {
-        console.log('🔍 Direct array contains invalid entry:', result[0]);
+      } else if (result && result.entries && result.entries.length > 0) {
+        // Object with entries property: {entries: [entry]}
+        if (result.entries[0] && typeof result.entries[0] === 'object' && Object.keys(result.entries[0]).length > 0) {
+          siteConfig = result.entries[0];
+        }
       }
-    } else if (result && result.entries && result.entries.length > 0) {
-      // Object with entries property: {entries: [entry]}
-      if (result.entries[0] && typeof result.entries[0] === 'object' && Object.keys(result.entries[0]).length > 0) {
-        siteConfig = result.entries[0];
-        console.log('🔍 Using entries property structure with valid entry');
-      } else {
-        console.log('🔍 Entries array contains invalid entry');
-      }
-    } else {
-      console.log('🔍 No valid result structure found');
-    }
-    
-    console.log('🔍 SDK extracted config exists:', !!siteConfig);
     } catch (sdkError) {
-      console.log('🔍 SDK query failed:', sdkError);
+      console.log('SDK query failed, trying management API fallback');
     }
     
     // If SDK failed, try Management API as fallback
     if (!siteConfig) {
-      console.log('🔍 SDK query did not return site configuration, trying Management API...');
       try {
         const managementApiUrl = `https://${process.env.CONTENTSTACK_API_HOST}/v3/content_types/site_configuration/entries`;
         const response = await fetch(managementApiUrl, {
@@ -179,24 +141,14 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
 
         if (response.ok) {
           const data = await response.json();
-          console.log('🔍 Management API response:', { 
-            entriesCount: data?.entries?.length || 0,
-            hasEntries: !!data?.entries
-          });
-          
           if (data?.entries && data.entries.length > 0) {
             siteConfig = data.entries[0];
-            console.log('🔍 Using Management API result');
           }
-        } else {
-          console.log('🔍 Management API failed:', response.status, response.statusText);
         }
       } catch (managementError) {
-        console.log('🔍 Management API error:', managementError);
+        console.error('Management API error:', managementError);
       }
     }
-    
-    console.log('🔍 Final site config exists:', !!siteConfig);
     
     return siteConfig;
   } catch (error) {

@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     const BASE_URL = `https://${API_HOST}`;
 
     if (!API_KEY || !MGMT_TOKEN) {
-      console.error('Missing required environment variables');
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -65,15 +64,11 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    console.log('🔧 Creating site configuration entry:', JSON.stringify(createData, null, 2));
-
     const createResponse = await axios.post(
       `${BASE_URL}/v3/content_types/site_configuration/entries`,
       createData,
       { headers }
     );
-
-    console.log('✅ Site configuration created successfully:', createResponse.data);
 
     const entryUid = createResponse.data.entry.uid;
 
@@ -92,9 +87,8 @@ export async function POST(request: NextRequest) {
         { headers }
       );
 
-      console.log('✅ Site configuration published successfully');
     } catch (publishError) {
-      console.warn('⚠️ Failed to publish entry, but creation succeeded:', publishError);
+      console.warn('Failed to publish entry, but creation succeeded:', publishError);
       // Don't fail the request if publish fails, the creation is what matters
     }
 

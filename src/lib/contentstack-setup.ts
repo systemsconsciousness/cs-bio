@@ -463,8 +463,11 @@ async function createSampleContent() {
 
   console.log('📝 Sample content created');
 
-  // Publish all created entries
-  for (const entry of createdEntries) {
+  // Publish all created entries sequentially with delays to avoid rate limiting
+  console.log(`📤 Publishing ${createdEntries.length} entries...`);
+  
+  for (let i = 0; i < createdEntries.length; i++) {
+    const entry = createdEntries[i];
     try {
       const publishData = {
         entry: {
@@ -479,36 +482,37 @@ async function createSampleContent() {
         publishData
       );
       
-      console.log(`✅ Published ${entry.content_type} entry: ${entry.uid}`);
+      console.log(`✅ Published ${entry.content_type} entry (${i + 1}/${createdEntries.length})`);
+      
+      // Add a delay between publish operations to avoid rate limiting
+      if (i < createdEntries.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     } catch (publishError) {
-      console.warn(`⚠️ Failed to publish ${entry.content_type} entry ${entry.uid}:`, publishError);
+      console.warn(`⚠️ Failed to publish ${entry.content_type} entry:`, publishError);
+      // Continue with next entry even if one fails
     }
   }
+  
+  console.log('🎉 All entries processed for publishing');
 }
 
 // Check if content types exist
 export async function checkContentTypesExist(): Promise<boolean> {
   if (!API_KEY) {
-    console.log('🔍 No API_KEY found for content type check');
     return false;
   }
   
   try {
-    console.log('🔍 Checking if content types exist...');
     const response = await axios.get(`${BASE_URL}/v3/content_types`, { headers });
     const contentTypeUids = response.data.content_types?.map((ct: { uid: string }) => ct.uid) || [];
-    
-    console.log('🔍 Found content types:', contentTypeUids);
     
     const requiredTypes = ['site_configuration', 'home_page', 'blog_post', 'work_experience', 'portfolio_project'];
     const allExist = requiredTypes.every(type => contentTypeUids.includes(type));
     
-    console.log('🔍 Required types:', requiredTypes);
-    console.log('🔍 All required types exist:', allExist);
-    
     return allExist;
   } catch (error) {
-    console.log('🔍 Error checking content types:', error);
+    console.error('Error checking content types:', error);
     return false;
   }
 }

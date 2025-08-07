@@ -23,14 +23,12 @@ export default async function Home() {
   
   try {
     siteConfig = await getSiteConfiguration();
-    console.log('🔍 Home page - site config exists:', !!siteConfig);
   } catch (error) {
-    console.error('🔍 Home page - error fetching site config:', error);
+    console.error('Error fetching site config:', error);
   }
   
   // If no site config exists, redirect to setup page
   if (!siteConfig) {
-    console.log('🔄 No site configuration found, redirecting to setup page');
     redirect('/setup');
   }
   
