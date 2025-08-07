@@ -20,8 +20,8 @@ export async function GET() {
         has_cdn: !!CDN,
         has_environment: !!ENVIRONMENT
       },
-      site_configuration: null,
-      error: null
+      site_configuration: null as unknown,
+      error: null as string | null
     };
 
     // Try to fetch site configuration using delivery API
