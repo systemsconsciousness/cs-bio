@@ -476,7 +476,7 @@ async function createSampleContent() {
   
   // Create Work Experiences (check each title for uniqueness)
   for (const work of sampleContent.work_experiences) {
-    const exists = await checkContentExists('work_experience', work.company || work.role);
+    const exists = await checkContentExists('work_experience', work.company || work.position);
     if (!exists) {
       const result = await makeRequest(
         'POST',
