@@ -60,6 +60,11 @@ export default function SetupPage() {
       throw new Error(errorData.error || 'Setup failed');
     }
 
+    console.log('✅ Site configuration created successfully');
+    
+    // Set a flag to prevent redirect loops
+    localStorage.setItem('setup-completed', Date.now().toString());
+
     // Wait longer for the data to propagate through Contentstack's CDN
     await new Promise(resolve => setTimeout(resolve, 3000));
     
@@ -69,27 +74,41 @@ export default function SetupPage() {
     
     while (retryCount < maxRetries) {
       try {
+        console.log(`🔍 Verification attempt ${retryCount + 1}/${maxRetries}...`);
+        
         const checkResponse = await fetch(`/api/setup/status?t=${Date.now()}`, {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
         });
+        
+        if (!checkResponse.ok) {
+          console.error('❌ Status check failed:', checkResponse.status, checkResponse.statusText);
+          break;
+        }
+        
         const checkData = await checkResponse.json();
+        console.log('🔍 Status check response:', checkData);
         
         if (checkData.setupCompleted) {
           console.log('✅ Setup verified, redirecting...');
           break;
         }
         
-        console.log(`⏳ Setup not yet detected, retry ${retryCount + 1}/${maxRetries}`);
+        console.log(`⏳ Setup not yet detected (setupCompleted: ${checkData.setupCompleted}), retry ${retryCount + 1}/${maxRetries}`);
         retryCount++;
         
         if (retryCount < maxRetries) {
+          console.log(`⏳ Waiting 2 seconds before next retry...`);
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
       } catch (error) {
-        console.error('Error verifying setup:', error);
+        console.error('❌ Error verifying setup:', error);
         break;
       }
+    }
+    
+    if (retryCount >= maxRetries) {
+      console.warn('⚠️ Max retries reached, redirecting anyway. Setup may still be propagating.');
     }
     
     // Force a hard navigation to ensure the page reloads completely

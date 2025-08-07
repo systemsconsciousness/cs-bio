@@ -1,10 +1,10 @@
-import { redirect } from 'next/navigation';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import WorkExperience from '@/components/WorkExperience';
 import Portfolio from '@/components/Portfolio';
 import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
+import SetupGuard from '@/components/SetupGuard';
 import { 
   getSiteConfiguration,
   getHomePageContent, 
@@ -24,15 +24,7 @@ export default async function Home() {
     console.error('🔍 Home page - error fetching site config:', error);
   }
   
-  // If no site config entry exists, redirect to setup page
-  if (!siteConfig) {
-    console.log('🔄 No site configuration found, redirecting to setup page');
-    redirect('/setup');
-  }
-  
-  console.log('✅ Site configuration exists, showing home page');
-
-  // Fetch all content from Contentstack
+  // Fetch all content from Contentstack (even if siteConfig is null for graceful fallback)
   const [homeContent, blogPosts, workExperiences, portfolioProjects] = await Promise.all([
     getHomePageContent(),
     getBlogPosts(),
@@ -41,13 +33,15 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="min-h-screen">
-      <Hero content={homeContent} siteConfig={siteConfig} />
-      <About content={homeContent} siteConfig={siteConfig} />
-      <WorkExperience experiences={workExperiences} />
-      <Portfolio projects={portfolioProjects} />
-      <Blog posts={blogPosts} />
-      <Contact content={homeContent} />
-    </div>
+    <SetupGuard siteConfigExists={!!siteConfig}>
+      <div className="min-h-screen">
+        <Hero content={homeContent} siteConfig={siteConfig} />
+        <About content={homeContent} siteConfig={siteConfig} />
+        <WorkExperience experiences={workExperiences} />
+        <Portfolio projects={portfolioProjects} />
+        <Blog posts={blogPosts} />
+        <Contact content={homeContent} />
+      </div>
+    </SetupGuard>
   );
 }
