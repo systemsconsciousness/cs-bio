@@ -114,26 +114,48 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
           console.log('🔍 SDK query result structure:', Array.isArray(result) ? 'array' : typeof result, 'length:', result?.length || result?.entries?.length || 0);
     
     // Check various possible data structures
-    console.log('🔍 SDK result structure analysis:', {
+          console.log('🔍 SDK result structure analysis:', {
       isArray: Array.isArray(result),
       length: result?.length,
       firstItemType: result?.[0] ? typeof result[0] : 'none',
       firstItemIsArray: Array.isArray(result?.[0]),
+      firstItemLength: Array.isArray(result?.[0]) ? result[0].length : 'N/A',
+      firstItemKeys: result?.[0] && typeof result[0] === 'object' ? Object.keys(result[0]) : 'N/A',
       hasEntries: !!result?.entries,
       entriesLength: result?.entries?.length
     });
     
+    // Log the actual first item to see what we're dealing with
+    if (result && result.length > 0) {
+      console.log('🔍 First item raw value:', JSON.stringify(result[0], null, 2));
+    }
+    
     if (Array.isArray(result) && result.length > 0) {
-      if (Array.isArray(result[0]) && result[0].length > 0) {
-        siteConfig = result[0][0]; // Nested array structure: [[entry]]
-        console.log('🔍 Using nested array structure');
-      } else if (result[0] && typeof result[0] === 'object') {
-        siteConfig = result[0]; // Direct array structure: [entry]
-        console.log('🔍 Using direct array structure');
+      if (Array.isArray(result[0])) {
+        // Nested array structure: [[entry]] or [[]]
+        if (result[0].length > 0 && result[0][0] && typeof result[0][0] === 'object' && Object.keys(result[0][0]).length > 0) {
+          siteConfig = result[0][0];
+          console.log('🔍 Using nested array structure with valid entry');
+        } else {
+          console.log('🔍 Nested array is empty or contains invalid entry');
+        }
+      } else if (result[0] && typeof result[0] === 'object' && Object.keys(result[0]).length > 0) {
+        // Direct array structure: [entry] - but make sure it's not an empty object
+        siteConfig = result[0];
+        console.log('🔍 Using direct array structure with valid entry');
+      } else {
+        console.log('🔍 Direct array contains invalid entry:', result[0]);
       }
     } else if (result && result.entries && result.entries.length > 0) {
-      siteConfig = result.entries[0]; // Object with entries property: {entries: [entry]}
-      console.log('🔍 Using entries property structure');
+      // Object with entries property: {entries: [entry]}
+      if (result.entries[0] && typeof result.entries[0] === 'object' && Object.keys(result.entries[0]).length > 0) {
+        siteConfig = result.entries[0];
+        console.log('🔍 Using entries property structure with valid entry');
+      } else {
+        console.log('🔍 Entries array contains invalid entry');
+      }
+    } else {
+      console.log('🔍 No valid result structure found');
     }
     
     console.log('🔍 SDK extracted config exists:', !!siteConfig);

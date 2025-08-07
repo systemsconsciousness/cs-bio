@@ -15,7 +15,7 @@ export async function GET() {
         ENVIRONMENT: process.env.CONTENTSTACK_ENVIRONMENT || 'production'
       },
       contentTypesExist: false,
-      siteConfig: null,
+      siteConfig: null as any,
       siteConfigExists: false,
       setupCompleted: false,
       logs: [] as string[]
