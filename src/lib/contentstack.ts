@@ -19,7 +19,7 @@ export interface SiteConfiguration {
   owner_name: string;
   owner_email: string;
   bio: string;
-  setup_completed: boolean;
+  setup_completed: boolean | string | number;
 }
 
 export interface HomePageContent {
