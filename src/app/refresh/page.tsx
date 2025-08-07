@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function RefreshPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [message, setMessage] = useState('');
-  const router = useRouter();
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
