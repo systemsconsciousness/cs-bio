@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Globe, FileText, Sparkles } from 'lucide-react';
+import { User, Globe, FileText, Sparkles, Camera } from 'lucide-react';
 
 interface SetupFormData {
   ownerName: string;
@@ -9,6 +9,7 @@ interface SetupFormData {
   siteName: string;
   siteSubtitle: string;
   bio: string;
+  avatarPhoto?: File;
 }
 
 interface WelcomeSetupProps {
@@ -24,10 +25,46 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
     bio: ''
   });
 
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image file must be less than 5MB');
+        return;
+      }
+      
+      setSelectedPhoto(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPhotoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+      
+      setError(null);
+    }
+  };
+
+  const removePhoto = () => {
+    setSelectedPhoto(null);
+    setPhotoPreview(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +79,8 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
 
     try {
       setStatusMessage('Creating your site configuration...');
-      await onComplete(formData);
+      const formDataWithPhoto = { ...formData, avatarPhoto: selectedPhoto };
+      await onComplete(formDataWithPhoto);
       setIsSuccess(true);
       setStatusMessage('Setup completed! Redirecting to your site...');
       // Keep submitting state active until redirect happens
@@ -133,6 +171,55 @@ export default function WelcomeSetup({ onComplete }: WelcomeSetupProps) {
                     className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-colors"
                     placeholder="hello@example.com"
                   />
+                </div>
+              </div>
+
+              {/* Profile Photo Upload */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Profile Photo (Optional)
+                </label>
+                <div className="flex items-center gap-4">
+                  {photoPreview ? (
+                    <div className="relative">
+                      <img
+                        src={photoPreview}
+                        alt="Profile preview"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-accent/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={removePhoto}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accent/5 rounded-full flex items-center justify-center">
+                      <Camera className="w-8 h-8 text-accent/50" />
+                    </div>
+                  )}
+                  
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      id="avatarPhoto"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="avatarPhoto"
+                      className="inline-flex items-center px-4 py-2 bg-accent text-accent-foreground rounded-lg cursor-pointer hover:bg-accent/90 transition-colors"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                    </label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      JPG, PNG or GIF. Max 5MB.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

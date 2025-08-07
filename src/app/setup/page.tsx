@@ -13,6 +13,7 @@ interface SetupFormData {
   siteName: string;
   siteSubtitle: string;
   bio: string;
+  avatarPhoto?: File;
 }
 
 export default function SetupPage() {
@@ -47,12 +48,21 @@ export default function SetupPage() {
   }, [router]);
 
   const handleSetupComplete = async (data: SetupFormData) => {
+    // Create FormData for file upload
+    const formData = new FormData();
+    formData.append('ownerName', data.ownerName);
+    formData.append('ownerEmail', data.ownerEmail);
+    formData.append('siteName', data.siteName);
+    formData.append('siteSubtitle', data.siteSubtitle);
+    formData.append('bio', data.bio);
+    
+    if (data.avatarPhoto) {
+      formData.append('avatarPhoto', data.avatarPhoto);
+    }
+
     const response = await fetch('/api/setup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      body: formData, // Use FormData instead of JSON
     });
 
     if (!response.ok) {

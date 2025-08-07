@@ -7,8 +7,13 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { ownerName, ownerEmail, siteName, siteSubtitle, bio } = body;
+    const formData = await request.formData();
+    const ownerName = formData.get('ownerName') as string;
+    const ownerEmail = formData.get('ownerEmail') as string;
+    const siteName = formData.get('siteName') as string;
+    const siteSubtitle = formData.get('siteSubtitle') as string;
+    const bio = formData.get('bio') as string;
+    const avatarPhoto = formData.get('avatarPhoto') as File | null;
 
     // Validate required fields
     if (!ownerName || !siteName) {
@@ -52,6 +57,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Upload avatar photo if provided
+    let avatarPhotoData = null;
+    if (avatarPhoto && avatarPhoto.size > 0) {
+      try {
+        console.log('Uploading avatar photo to Contentstack...');
+        
+        // Create FormData for asset upload
+        const assetFormData = new FormData();
+        assetFormData.append('asset[upload]', avatarPhoto);
+        assetFormData.append('asset[title]', `${ownerName} Avatar`);
+        assetFormData.append('asset[description]', `Profile photo for ${ownerName}`);
+
+        const uploadResponse = await axios.post(
+          `${BASE_URL}/v3/assets`,
+          assetFormData,
+          {
+            headers: {
+              'api_key': API_KEY,
+              'authorization': MGMT_TOKEN,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+
+        if (uploadResponse.data?.asset) {
+          avatarPhotoData = {
+            url: uploadResponse.data.asset.url,
+            title: uploadResponse.data.asset.title,
+            filename: uploadResponse.data.asset.filename
+          };
+          console.log('Avatar photo uploaded successfully:', avatarPhotoData.url);
+        }
+      } catch (uploadError) {
+        console.warn('Failed to upload avatar photo:', uploadError);
+        // Continue without photo if upload fails
+      }
+    }
+
     // Create the new site configuration entry
     const createData = {
       entry: {
@@ -60,7 +103,8 @@ export async function POST(request: NextRequest) {
         site_subtitle: siteSubtitle || '',
         owner_name: ownerName,
         owner_email: ownerEmail || '',
-        bio: bio || ''
+        bio: bio || '',
+        ...(avatarPhotoData && { avatar_photo: avatarPhotoData })
       }
     };
 
