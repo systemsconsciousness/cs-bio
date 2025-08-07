@@ -23,7 +23,10 @@ export default function SetupPage() {
         const response = await fetch('/api/setup/status');
         const data = await response.json();
         
+        console.log('🔍 Setup page - status response:', data);
+        
         if (data.setupCompleted) {
+          console.log('🔄 Setup already completed, redirecting to home');
           router.push('/');
           return;
         }

@@ -6,20 +6,31 @@ export async function GET() {
     const siteConfig = await getSiteConfiguration();
     
     console.log('🔍 Status check - site config:', JSON.stringify(siteConfig, null, 2));
-    console.log('🔍 Status check - setup completed:', siteConfig?.setup_completed);
+    console.log('🔍 Status check - setup completed field:', siteConfig?.setup_completed);
     
-    const setupCompleted = !!(siteConfig && siteConfig.setup_completed);
+    // Check setup completion with multiple fallbacks
+    const setupCompleted = !!(
+      siteConfig && 
+      (siteConfig.setup_completed === true || 
+       siteConfig.setup_completed === 'true' ||
+       siteConfig.setup_completed === 1)
+    );
     
     console.log('🔍 Status check - final result:', setupCompleted);
     
     return NextResponse.json({
       setupCompleted,
-      siteConfig: siteConfig // Include for debugging
+      rawSetupFlag: siteConfig?.setup_completed,
+      siteConfigExists: !!siteConfig,
+      debug: process.env.NODE_ENV === 'development' ? siteConfig : undefined
     });
   } catch (error) {
     console.error('Setup status check error:', error);
     return NextResponse.json(
-      { setupCompleted: false },
+      { 
+        setupCompleted: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
