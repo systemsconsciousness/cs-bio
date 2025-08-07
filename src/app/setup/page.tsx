@@ -20,7 +20,13 @@ export default function SetupPage() {
   useEffect(() => {
     const checkSetupStatus = async () => {
       try {
-        const response = await fetch('/api/setup/status');
+        // Add cache-busting query parameter
+        const response = await fetch(`/api/setup/status?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         const data = await response.json();
         
         console.log('🔍 Setup page - status response:', data);

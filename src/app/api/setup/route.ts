@@ -94,7 +94,17 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if publish fails, the creation is what matters
     }
 
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ 
+      success: true,
+      timestamp: Date.now()
+    });
+
+    // Add cache-busting headers
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
   } catch (error) {
     console.error('Setup API error:', error);
     return NextResponse.json(

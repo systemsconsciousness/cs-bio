@@ -95,6 +95,8 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
     try {
       const query = stack.ContentType('site_configuration').Query();
       query.descending('updated_at');
+      // Add cache-busting parameter
+      query.addParam('timestamp', Date.now().toString());
       const result = await query.toJSON().find();
       
           console.log('🔍 SDK query result structure:', Array.isArray(result) ? 'array' : typeof result, 'length:', result?.length || result?.entries?.length || 0);

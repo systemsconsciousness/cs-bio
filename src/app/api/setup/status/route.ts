@@ -12,10 +12,18 @@ export async function GET() {
     
     console.log('🔍 Status check - final result:', setupCompleted);
     
-    return NextResponse.json({
+    const response = NextResponse.json({
       setupCompleted,
-      siteConfigExists: !!siteConfig
+      siteConfigExists: !!siteConfig,
+      timestamp: Date.now() // Add timestamp for cache busting
     });
+
+    // Add cache-busting headers
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
   } catch (error) {
     console.error('Setup status check error:', error);
     return NextResponse.json(
