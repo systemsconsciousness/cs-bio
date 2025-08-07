@@ -100,14 +100,26 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
           console.log('🔍 SDK query result structure:', Array.isArray(result) ? 'array' : typeof result, 'length:', result?.length || result?.entries?.length || 0);
     
     // Check various possible data structures
+    console.log('🔍 SDK result structure analysis:', {
+      isArray: Array.isArray(result),
+      length: result?.length,
+      firstItemType: result?.[0] ? typeof result[0] : 'none',
+      firstItemIsArray: Array.isArray(result?.[0]),
+      hasEntries: !!result?.entries,
+      entriesLength: result?.entries?.length
+    });
+    
     if (Array.isArray(result) && result.length > 0) {
-      if (Array.isArray(result[0])) {
-        siteConfig = result[0][0]; // Nested array
-      } else {
-        siteConfig = result[0]; // Direct array
+      if (Array.isArray(result[0]) && result[0].length > 0) {
+        siteConfig = result[0][0]; // Nested array structure: [[entry]]
+        console.log('🔍 Using nested array structure');
+      } else if (result[0] && typeof result[0] === 'object') {
+        siteConfig = result[0]; // Direct array structure: [entry]
+        console.log('🔍 Using direct array structure');
       }
     } else if (result && result.entries && result.entries.length > 0) {
-      siteConfig = result.entries[0]; // Object with entries
+      siteConfig = result.entries[0]; // Object with entries property: {entries: [entry]}
+      console.log('🔍 Using entries property structure');
     }
     
     console.log('🔍 SDK extracted config exists:', !!siteConfig);
@@ -115,38 +127,9 @@ export const getSiteConfiguration = async (): Promise<SiteConfiguration | null> 
       console.log('🔍 SDK query failed, trying management API:', sdkError);
     }
     
-    // If SDK failed or returned null, try management API directly
+    // Log if SDK extraction failed but still attempt the result
     if (!siteConfig) {
-      try {
-        const API_KEY = process.env.CONTENTSTACK_API_KEY;
-        const DELIVERY_TOKEN = process.env.CONTENTSTACK_DELIVERY_TOKEN;
-        const CDN = process.env.CONTENTSTACK_CDN || 'cdn.contentstack.io';
-        const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
-        
-        if (API_KEY && DELIVERY_TOKEN) {
-          const response = await fetch(
-            `https://${CDN}/v3/content_types/site_configuration/entries?environment=${ENVIRONMENT}`,
-            {
-              headers: {
-                'api_key': API_KEY,
-                'access_token': DELIVERY_TOKEN,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log('🔍 Direct API result entries count:', data.entries?.length || 0);
-            
-            if (data.entries && data.entries.length > 0) {
-              siteConfig = data.entries[0];
-            }
-          }
-        }
-      } catch (apiError) {
-        console.log('🔍 Direct API also failed:', apiError);
-      }
+      console.log('🔍 SDK query did not return site configuration, setup not completed');
     }
     
     console.log('🔍 Final site config exists:', !!siteConfig);

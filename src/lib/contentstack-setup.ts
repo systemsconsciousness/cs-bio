@@ -412,38 +412,77 @@ export async function ensureContentTypesExist(): Promise<boolean> {
 async function createSampleContent() {
   // Skip creating Site Configuration entry - user will create it via setup form
   
+  const ENVIRONMENT = process.env.CONTENTSTACK_ENVIRONMENT || 'production';
+  const createdEntries: { uid: string; content_type: string }[] = [];
+  
   // Create Home Page
-  await makeRequest(
+  const homePageResult = await makeRequest(
     'POST',
     `${BASE_URL}/v3/content_types/home_page/entries`,
     { entry: sampleContent.home_page }
   );
+  if (homePageResult?.entry?.uid) {
+    createdEntries.push({ uid: homePageResult.entry.uid, content_type: 'home_page' });
+  }
   
   // Create Blog Posts
   for (const blogPost of sampleContent.blog_posts) {
-    await makeRequest(
+    const result = await makeRequest(
       'POST',
       `${BASE_URL}/v3/content_types/blog_post/entries`,
       { entry: blogPost }
     );
+    if (result?.entry?.uid) {
+      createdEntries.push({ uid: result.entry.uid, content_type: 'blog_post' });
+    }
   }
   
   // Create Work Experiences
   for (const work of sampleContent.work_experiences) {
-    await makeRequest(
+    const result = await makeRequest(
       'POST',
       `${BASE_URL}/v3/content_types/work_experience/entries`,
       { entry: work }
     );
+    if (result?.entry?.uid) {
+      createdEntries.push({ uid: result.entry.uid, content_type: 'work_experience' });
+    }
   }
   
   // Create Portfolio Projects
   for (const project of sampleContent.portfolio_projects) {
-    await makeRequest(
+    const result = await makeRequest(
       'POST',
       `${BASE_URL}/v3/content_types/portfolio_project/entries`,
       { entry: project }
     );
+    if (result?.entry?.uid) {
+      createdEntries.push({ uid: result.entry.uid, content_type: 'portfolio_project' });
+    }
+  }
+
+  console.log('📝 Sample content created');
+
+  // Publish all created entries
+  for (const entry of createdEntries) {
+    try {
+      const publishData = {
+        entry: {
+          environments: [ENVIRONMENT],
+          locales: ['en-us']
+        }
+      };
+
+      await makeRequest(
+        'POST',
+        `${BASE_URL}/v3/content_types/${entry.content_type}/entries/${entry.uid}/publish`,
+        publishData
+      );
+      
+      console.log(`✅ Published ${entry.content_type} entry: ${entry.uid}`);
+    } catch (publishError) {
+      console.warn(`⚠️ Failed to publish ${entry.content_type} entry ${entry.uid}:`, publishError);
+    }
   }
 }
 
