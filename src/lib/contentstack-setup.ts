@@ -103,6 +103,16 @@ const contentTypes = {
         unique: false
       },
       {
+        display_name: "Resume/CV",
+        uid: "resume_cv",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload your resume or CV (PDF recommended)",
+          rich_text_type: "standard"
+        },
+        unique: false
+      },
+      {
         display_name: "Years of Experience",
         uid: "years_experience",
         data_type: "number",
@@ -144,24 +154,6 @@ const contentTypes = {
         data_type: "text",
         field_metadata: {
           description: "Your primary time zone (e.g., PST, EST, UTC+2)"
-        },
-        unique: false
-      },
-      {
-        display_name: "Primary Color",
-        uid: "primary_color",
-        data_type: "text",
-        field_metadata: {
-          description: "Primary brand color (hex code, e.g., #3b82f6)"
-        },
-        unique: false
-      },
-      {
-        display_name: "Secondary Color",
-        uid: "secondary_color",
-        data_type: "text",
-        field_metadata: {
-          description: "Secondary brand color (hex code, e.g., #1e40af)"
         },
         unique: false
       },
@@ -397,8 +389,6 @@ const sampleContent = {
     projects_completed: 50,
     technologies_count: 10,
     time_zone: "PST",
-    primary_color: "#3b82f6",
-    secondary_color: "#1e40af",
     github_url: "https://github.com/username",
     linkedin_url: "https://linkedin.com/in/username"
   },

@@ -8,37 +8,38 @@ interface HeroProps {
 }
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
-  // Helper function to extract avatar URL from various Contentstack file field formats
-  const getAvatarUrl = (avatarPhoto: SiteConfiguration['avatar_photo']): string | null => {
-    if (!avatarPhoto) return null;
+  // Helper function to extract file URL from various Contentstack file field formats
+  const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
+    if (!fileField) return null;
     
     // If it's a string, check if it's a UID or full URL
-    if (typeof avatarPhoto === 'string') {
+    if (typeof fileField === 'string') {
       // If it starts with 'blt', it's a Contentstack asset UID - construct delivery URL
-      if (avatarPhoto.startsWith('blt')) {
+      if (fileField.startsWith('blt')) {
         // Construct the delivery URL using Contentstack's asset delivery pattern
         const stackApiKey = process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY || 'bltf30bb27542f99789'; // fallback from logs
         const cdnHost = 'images.contentstack.io';
-        return `https://${cdnHost}/v3/assets/${stackApiKey}/${avatarPhoto}/download`;
+        return `https://${cdnHost}/v3/assets/${stackApiKey}/${fileField}/download`;
       }
       // Otherwise assume it's already a full URL
-      return avatarPhoto;
+      return fileField;
     }
     
-    // If it's an array, get the first image
-    if (Array.isArray(avatarPhoto) && avatarPhoto.length > 0) {
-      return avatarPhoto[0].url || null;
+    // If it's an array, get the first file
+    if (Array.isArray(fileField) && fileField.length > 0) {
+      return fileField[0].url || null;
     }
     
     // If it's an object with url property
-    if (typeof avatarPhoto === 'object' && 'url' in avatarPhoto) {
-      return avatarPhoto.url || null;
+    if (typeof fileField === 'object' && 'url' in fileField) {
+      return fileField.url || null;
     }
     
     return null;
   };
 
-  const avatarUrl = getAvatarUrl(siteConfig?.avatar_photo);
+  const avatarUrl = getFileUrl(siteConfig?.avatar_photo);
+  const resumeUrl = getFileUrl(siteConfig?.resume_cv);
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
@@ -81,7 +82,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md sm:max-w-none mx-auto">
+          <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md sm:max-w-none mx-auto ${!resumeUrl ? 'sm:max-w-xs' : ''}`}>
             <a
               href="#portfolio"
               className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-all duration-300 transform hover:scale-105"
@@ -90,10 +91,18 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
               <ArrowDown className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
             </a>
             
-            <button className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-border rounded-full font-medium hover:bg-muted transition-all duration-300">
-              <Download className="mr-2 w-4 sm:w-5 h-4 sm:h-5" />
-              Download CV
-            </button>
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-border rounded-full font-medium hover:bg-muted transition-all duration-300"
+              >
+                <Download className="mr-2 w-4 sm:w-5 h-4 sm:h-5" />
+                Download CV
+              </a>
+            )}
           </div>
 
           {/* Skills Tags */}

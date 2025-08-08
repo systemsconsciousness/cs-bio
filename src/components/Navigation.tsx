@@ -12,33 +12,75 @@ const Navigation = ({ siteName }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
+  const updateThemeClasses = (dark: boolean) => {
+    const html = document.documentElement;
+    
+    // Remove existing theme classes
+    html.classList.remove('dark', 'light');
+    
+    // Add appropriate class
+    if (dark) {
+      html.classList.add('dark');
+    } else {
+      html.classList.add('light');
+    }
+  };
+
   useEffect(() => {
     // Check if user has a saved preference, otherwise use system preference
     const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    const shouldBeDark = savedTheme === 'dark' || (savedTheme !== 'light' && systemPrefersDark);
+    const updateFromSystemPreference = () => {
+      const currentSavedTheme = localStorage.getItem('theme');
+      
+      // Only update if user hasn't set a manual preference
+      if (!currentSavedTheme) {
+        const systemPrefersDark = mediaQuery.matches;
+        setIsDark(systemPrefersDark);
+        updateThemeClasses(systemPrefersDark);
+      }
+    };
+    
+    // Initial setup
+    let shouldBeDark: boolean;
+    
+    if (savedTheme === 'dark') {
+      shouldBeDark = true;
+    } else if (savedTheme === 'light') {
+      shouldBeDark = false;
+    } else {
+      // No saved preference, use system preference
+      shouldBeDark = mediaQuery.matches;
+    }
     
     setIsDark(shouldBeDark);
+    updateThemeClasses(shouldBeDark);
     
-    if (shouldBeDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    // Listen for system theme changes
+    mediaQuery.addEventListener('change', updateFromSystemPreference);
+    
+    // Cleanup
+    return () => {
+      mediaQuery.removeEventListener('change', updateFromSystemPreference);
+    };
   }, []);
 
   const toggleTheme = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
+    updateThemeClasses(newIsDark);
     
-    if (newIsDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    // Save user preference
+    localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+  };
+
+  const resetToSystemTheme = () => {
+    // Remove saved preference to go back to system default
+    localStorage.removeItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDark(systemPrefersDark);
+    updateThemeClasses(systemPrefersDark);
   };
 
   const navItems = [
@@ -76,8 +118,10 @@ const Navigation = ({ siteName }: NavigationProps) => {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleTheme}
+              onDoubleClick={resetToSystemTheme}
               className="p-2 rounded-lg hover:bg-muted transition-colors"
-              aria-label="Toggle theme"
+              aria-label="Toggle theme (double-click to reset to system)"
+              title="Click to toggle theme, double-click to use system preference"
             >
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>

@@ -22,6 +22,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark mode - both system preference and manual toggle */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -32,6 +33,28 @@
     --accent: #60a5fa;
     --accent-foreground: #0f172a;
   }
+}
+
+/* Manual dark mode override */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --accent: #60a5fa;
+  --accent-foreground: #0f172a;
+}
+
+/* Force light mode when explicitly set */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
 }
 
 * {

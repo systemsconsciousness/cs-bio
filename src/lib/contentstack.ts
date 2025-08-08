@@ -30,13 +30,22 @@ export interface SiteConfiguration {
     filename?: string;
     uid?: string;
   }[] | string;
+  resume_cv?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
   years_experience?: number;
   work_location?: string;
   projects_completed?: number;
   technologies_count?: number;
   time_zone?: string;
-  primary_color?: string;
-  secondary_color?: string;
   github_url?: string;
   linkedin_url?: string;
 }
