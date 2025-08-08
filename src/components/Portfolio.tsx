@@ -1,4 +1,5 @@
 import { ExternalLink, Github, Star } from 'lucide-react';
+import Image from 'next/image';
 import { PortfolioProject } from '@/lib/contentstack';
 
 interface PortfolioProps {
@@ -6,6 +7,36 @@ interface PortfolioProps {
 }
 
 const Portfolio = ({ projects }: PortfolioProps) => {
+  // Helper function to extract file URL from various Contentstack file field formats
+  const getFileUrl = (fileField: PortfolioProject['featured_image']): string | null => {
+    if (!fileField) return null;
+    
+    // If it's a string, check if it's a UID or full URL
+    if (typeof fileField === 'string') {
+      // If it starts with 'blt', it's a Contentstack asset UID - construct delivery URL
+      if (fileField.startsWith('blt')) {
+        // Construct the delivery URL using Contentstack's asset delivery pattern
+        const stackApiKey = process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY || 'bltf30bb27542f99789';
+        const cdnHost = 'images.contentstack.io';
+        return `https://${cdnHost}/v3/assets/${stackApiKey}/${fileField}/download`;
+      }
+      // Otherwise assume it's already a full URL
+      return fileField;
+    }
+    
+    // If it's an array, get the first file
+    if (Array.isArray(fileField) && fileField.length > 0) {
+      return fileField[0].url || null;
+    }
+    
+    // If it's an object with url property
+    if (typeof fileField === 'object' && 'url' in fileField) {
+      return fileField.url || null;
+    }
+    
+    return null;
+  };
+
   return (
     <section id="portfolio" className="py-20 bg-muted/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,23 +53,38 @@ const Portfolio = ({ projects }: PortfolioProps) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {projects.map((project) => (
-            <div
-              key={project.uid}
-              className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-            >
-              {/* Project Image Placeholder */}
-              <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center overflow-hidden">
-                <div className="text-6xl font-bold text-accent/30">
-                  {project.title.charAt(0)}
+          {projects.map((project) => {
+            const featuredImageUrl = getFileUrl(project.featured_image);
+            
+            return (
+              <div
+                key={project.uid}
+                className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                {/* Project Image */}
+                <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 overflow-hidden">
+                  {featuredImageUrl ? (
+                    <Image
+                      src={featuredImageUrl}
+                      alt={project.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      unoptimized={true}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-6xl font-bold text-accent/30">
+                        {project.title.charAt(0)}
+                      </div>
+                    </div>
+                  )}
+                  {project.featured && (
+                    <div className="absolute top-4 right-4 bg-accent text-accent-foreground p-2 rounded-full">
+                      <Star className="w-4 h-4" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                {project.featured && (
-                  <div className="absolute top-4 right-4 bg-accent text-accent-foreground p-2 rounded-full">
-                    <Star className="w-4 h-4" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
 
               {/* Project Content */}
               <div className="p-4 sm:p-6">
@@ -109,7 +155,8 @@ const Portfolio = ({ projects }: PortfolioProps) => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {projects.length === 0 && (

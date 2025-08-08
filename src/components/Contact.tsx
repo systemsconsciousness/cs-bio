@@ -22,7 +22,7 @@ const Contact = ({ content, siteConfig }: ContactProps) => {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Contact Information Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Email Card - Always show */}
@@ -62,7 +62,7 @@ const Contact = ({ content, siteConfig }: ContactProps) => {
                   rel="noopener noreferrer"
                   className="text-accent hover:text-accent/80 transition-colors font-medium"
                 >
-                  View my code
+                  View my projects
                 </a>
               </div>
             )}

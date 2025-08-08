@@ -1,5 +1,6 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BlogPost } from '@/lib/contentstack';
 
 interface BlogProps {
@@ -7,6 +8,36 @@ interface BlogProps {
 }
 
 const Blog = ({ posts }: BlogProps) => {
+  // Helper function to extract file URL from various Contentstack file field formats
+  const getFileUrl = (fileField: BlogPost['featured_image']): string | null => {
+    if (!fileField) return null;
+    
+    // If it's a string, check if it's a UID or full URL
+    if (typeof fileField === 'string') {
+      // If it starts with 'blt', it's a Contentstack asset UID - construct delivery URL
+      if (fileField.startsWith('blt')) {
+        // Construct the delivery URL using Contentstack's asset delivery pattern
+        const stackApiKey = process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY || 'bltf30bb27542f99789';
+        const cdnHost = 'images.contentstack.io';
+        return `https://${cdnHost}/v3/assets/${stackApiKey}/${fileField}/download`;
+      }
+      // Otherwise assume it's already a full URL
+      return fileField;
+    }
+    
+    // If it's an array, get the first file
+    if (Array.isArray(fileField) && fileField.length > 0) {
+      return fileField[0].url || null;
+    }
+    
+    // If it's an object with url property
+    if (typeof fileField === 'object' && 'url' in fileField) {
+      return fileField.url || null;
+    }
+    
+    return null;
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -41,18 +72,33 @@ const Blog = ({ posts }: BlogProps) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {featuredPosts.map((post) => (
-            <article
-              key={post.uid}
-              className="group bg-muted/30 rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-            >
-              {/* Article Image Placeholder */}
-              <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center overflow-hidden">
-                <div className="text-6xl font-bold text-accent/30">
-                  {post.title.charAt(0)}
+          {featuredPosts.map((post) => {
+            const featuredImageUrl = getFileUrl(post.featured_image);
+            
+            return (
+              <article
+                key={post.uid}
+                className="group bg-muted/30 rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+              >
+                {/* Article Image */}
+                <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 overflow-hidden">
+                  {featuredImageUrl ? (
+                    <Image
+                      src={featuredImageUrl}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      unoptimized={true}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-6xl font-bold text-accent/30">
+                        {post.title.charAt(0)}
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
 
               {/* Article Content */}
               <div className="p-4 sm:p-6">
@@ -115,7 +161,8 @@ const Blog = ({ posts }: BlogProps) => {
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
 
         {posts.length === 0 && (

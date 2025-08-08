@@ -68,6 +68,17 @@ export interface BlogPost {
   author?: string;
   published_date?: string;
   blog_tags?: string[];
+  featured_image?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
   created_at: string;
   updated_at: string;
 }
@@ -96,6 +107,17 @@ export interface PortfolioProject {
   github_url?: string;
   project_type?: string;
   featured?: boolean;
+  featured_image?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
   created_at: string;
   updated_at: string;
 }

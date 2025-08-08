@@ -264,6 +264,16 @@ const contentTypes = {
         uid: "blog_tags", // Fixed: was "tags" which is restricted
         data_type: "text",
         multiple: true
+      },
+      {
+        display_name: "Featured Image",
+        uid: "featured_image",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload a featured image for this blog post (optional)",
+          rich_text_type: "standard"
+        },
+        unique: false
       }
     ]
   },
@@ -370,6 +380,16 @@ const contentTypes = {
         display_name: "Featured",
         uid: "featured",
         data_type: "boolean"
+      },
+      {
+        display_name: "Featured Image",
+        uid: "featured_image",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload a featured image for this project (optional)",
+          rich_text_type: "standard"
+        },
+        unique: false
       }
     ]
   }

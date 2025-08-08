@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import { SiteConfiguration } from '@/lib/contentstack';
 
 interface FooterProps {
@@ -6,28 +6,27 @@ interface FooterProps {
 }
 
 const Footer = ({ siteConfig }: FooterProps) => {
+  // Create social links array with dynamic URLs from siteConfig
   const socialLinks = [
     {
-      href: 'mailto:hello@example.com',
+      href: `mailto:${siteConfig?.owner_email || 'hello@example.com'}`,
       icon: Mail,
       label: 'Email',
+      show: true, // Always show email
     },
     {
-      href: 'https://github.com',
+      href: siteConfig?.github_url || '',
       icon: Github,
       label: 'GitHub',
+      show: !!siteConfig?.github_url, // Only show if URL exists
     },
     {
-      href: 'https://linkedin.com',
+      href: siteConfig?.linkedin_url || '',
       icon: Linkedin,
       label: 'LinkedIn',
+      show: !!siteConfig?.linkedin_url, // Only show if URL exists
     },
-    {
-      href: 'https://twitter.com',
-      icon: Twitter,
-      label: 'Twitter',
-    },
-  ];
+  ].filter(link => link.show); // Filter out links that shouldn't be shown
 
   return (
     <footer className="bg-muted border-t border-border">
@@ -102,7 +101,33 @@ const Footer = ({ siteConfig }: FooterProps) => {
             © {new Date().getFullYear()} {siteConfig?.site_name || 'Personal Website'}. All rights reserved.
           </p>
           <p className="text-muted-foreground text-sm mt-2 sm:mt-0">
-            Built with Next.js &amp; Contentstack • Powered by Launch
+            Built with{' '}
+            <a 
+              href="https://github.com/systemsconsciousness/cs-bio" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              cs-bio
+            </a>
+            {' '}&amp;{' '}
+            <a 
+              href="https://contentstack.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              Contentstack
+            </a>
+            {' '}•{' '}
+            <a 
+              href="https://www.contentstack.com/platforms/launch" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              Powered by Launch
+            </a>
           </p>
         </div>
       </div>
