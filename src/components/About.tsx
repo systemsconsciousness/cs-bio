@@ -45,11 +45,6 @@ const About = ({ content, siteConfig }: AboutProps) => {
                 <p className="text-muted-foreground">
                   <span className="font-medium">Location:</span> {siteConfig?.work_location || 'Remote / Global'}
                 </p>
-                {siteConfig?.time_zone && (
-                  <p className="text-muted-foreground">
-                    <span className="font-medium">Time Zone:</span> {siteConfig.time_zone}
-                  </p>
-                )}
               </div>
             </div>
           </div>

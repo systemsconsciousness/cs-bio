@@ -37,6 +37,8 @@ export interface SiteConfiguration {
   time_zone?: string;
   primary_color?: string;
   secondary_color?: string;
+  github_url?: string;
+  linkedin_url?: string;
 }
 
 export interface HomePageContent {

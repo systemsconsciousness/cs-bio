@@ -10,27 +10,34 @@ interface ThemeProviderProps {
 
 const ThemeProvider = ({ siteConfig, children }: ThemeProviderProps) => {
   useEffect(() => {
-    if (siteConfig?.primary_color || siteConfig?.secondary_color) {
-      const root = document.documentElement;
-      
-      if (siteConfig.primary_color) {
-        // Convert hex to HSL for better color manipulation
-        const primaryHsl = hexToHsl(siteConfig.primary_color);
-        if (primaryHsl) {
-          root.style.setProperty('--accent', `${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%`);
-          // Create a darker variant for hover states
-          root.style.setProperty('--accent-foreground', primaryHsl.l > 50 ? '0 0% 100%' : '0 0% 0%');
-        }
+    const root = document.documentElement;
+    
+    if (siteConfig?.primary_color) {
+      // Convert hex to RGB and then to HSL
+      const primaryHsl = hexToHsl(siteConfig.primary_color);
+      if (primaryHsl) {
+        // Set CSS custom properties in the format Tailwind expects
+        root.style.setProperty('--accent', `${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%`);
+        // Set contrasting foreground color
+        root.style.setProperty('--accent-foreground', primaryHsl.l > 50 ? '210 40% 2%' : '0 0% 98%');
       }
-      
-      if (siteConfig.secondary_color) {
-        const secondaryHsl = hexToHsl(siteConfig.secondary_color);
-        if (secondaryHsl) {
-          // Use secondary color for muted elements
-          root.style.setProperty('--muted', `${secondaryHsl.h} ${secondaryHsl.s}% ${Math.min(secondaryHsl.l + 40, 95)}%`);
-          root.style.setProperty('--muted-foreground', `${secondaryHsl.h} ${Math.max(secondaryHsl.s - 10, 0)}% ${Math.max(secondaryHsl.l - 20, 15)}%`);
-        }
+    }
+    
+    if (siteConfig?.secondary_color) {
+      const secondaryHsl = hexToHsl(siteConfig.secondary_color);
+      if (secondaryHsl) {
+        // Use secondary color for border and subtle accents
+        root.style.setProperty('--border', `${secondaryHsl.h} ${Math.max(secondaryHsl.s - 20, 10)}% ${Math.min(secondaryHsl.l + 30, 80)}%`);
       }
+    }
+    
+    // Always ensure we have fallback values
+    if (!siteConfig?.primary_color) {
+      root.style.setProperty('--accent', '217 91% 60%'); // Default blue
+      root.style.setProperty('--accent-foreground', '0 0% 98%');
+    }
+    if (!siteConfig?.secondary_color) {
+      root.style.setProperty('--border', '214 32% 91%'); // Default border
     }
   }, [siteConfig?.primary_color, siteConfig?.secondary_color]);
 

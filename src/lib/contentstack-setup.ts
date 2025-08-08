@@ -164,6 +164,24 @@ const contentTypes = {
           description: "Secondary brand color (hex code, e.g., #1e40af)"
         },
         unique: false
+      },
+      {
+        display_name: "GitHub URL",
+        uid: "github_url",
+        data_type: "text",
+        field_metadata: {
+          description: "Your GitHub profile URL (e.g., https://github.com/username)"
+        },
+        unique: false
+      },
+      {
+        display_name: "LinkedIn URL", 
+        uid: "linkedin_url",
+        data_type: "text",
+        field_metadata: {
+          description: "Your LinkedIn profile URL (e.g., https://linkedin.com/in/username)"
+        },
+        unique: false
       }
     ]
   },
@@ -380,7 +398,9 @@ const sampleContent = {
     technologies_count: 10,
     time_zone: "PST",
     primary_color: "#3b82f6",
-    secondary_color: "#1e40af"
+    secondary_color: "#1e40af",
+    github_url: "https://github.com/username",
+    linkedin_url: "https://linkedin.com/in/username"
   },
   home_page: {
     title: "Welcome to My Bio Site",

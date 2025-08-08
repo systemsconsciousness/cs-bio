@@ -1,4 +1,4 @@
-import { ArrowDown, Download } from 'lucide-react';
+import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
 import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 
@@ -107,6 +107,32 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
                   {skill}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* Social Links */}
+          {(siteConfig?.github_url || siteConfig?.linkedin_url) && (
+            <div className="flex gap-4 justify-center">
+              {siteConfig?.github_url && (
+                <a
+                  href={siteConfig.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-muted/50 hover:bg-accent hover:text-accent-foreground rounded-full transition-all duration-300 transform hover:scale-110"
+                >
+                  <Github className="w-5 h-5" />
+                </a>
+              )}
+              {siteConfig?.linkedin_url && (
+                <a
+                  href={siteConfig.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-muted/50 hover:bg-accent hover:text-accent-foreground rounded-full transition-all duration-300 transform hover:scale-110"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              )}
             </div>
           )}
         </div>

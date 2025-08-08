@@ -47,7 +47,7 @@ export default async function Home() {
       <WorkExperience experiences={workExperiences} />
       <Portfolio projects={portfolioProjects} />
       <Blog posts={blogPosts} />
-      <Contact content={homeContent} />
+      <Contact content={homeContent} siteConfig={siteConfig} />
     </div>
   );
 }
