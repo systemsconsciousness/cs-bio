@@ -372,6 +372,22 @@ const contentTypes = {
         data_type: "text"
       },
       {
+        display_name: "Project Link",
+        uid: "project_link",
+        data_type: "text",
+        field_metadata: {
+          description: "Link to the project (could be live demo, app store, etc.)"
+        }
+      },
+      {
+        display_name: "GitHub Repository Link",
+        uid: "github_repository_link", 
+        data_type: "text",
+        field_metadata: {
+          description: "Link to the GitHub repository for this specific project"
+        }
+      },
+      {
         display_name: "Project Type",
         uid: "project_type",
         data_type: "text"
@@ -472,6 +488,8 @@ const sampleContent = {
       technologies: ["Next.js", "React", "Stripe", "PostgreSQL"],
       live_url: "https://ecommerce-demo.example.com",
       github_url: "https://github.com/johndoe/ecommerce-platform",
+      project_link: "https://ecommerce-demo.example.com",
+      github_repository_link: "https://github.com/johndoe/ecommerce-platform",
       project_type: "Web Application",
       featured: true
     },
@@ -482,6 +500,8 @@ const sampleContent = {
       technologies: ["React", "Socket.io", "Express.js", "MongoDB"],
       live_url: "https://taskapp-demo.example.com",
       github_url: "https://github.com/johndoe/task-management",
+      project_link: "https://taskapp-demo.example.com",
+      github_repository_link: "https://github.com/johndoe/task-management",
       project_type: "Web Application",
       featured: true
     }

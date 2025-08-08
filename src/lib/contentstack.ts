@@ -105,6 +105,8 @@ export interface PortfolioProject {
   technologies?: string[];
   live_url?: string;
   github_url?: string;
+  project_link?: string;
+  github_repository_link?: string;
   project_type?: string;
   featured?: boolean;
   featured_image?: {

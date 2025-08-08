@@ -1,12 +1,13 @@
-import { ExternalLink, Github, Star } from 'lucide-react';
+import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
-import { PortfolioProject } from '@/lib/contentstack';
+import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
 
 interface PortfolioProps {
   projects: PortfolioProject[];
+  siteConfig?: SiteConfiguration | null;
 }
 
-const Portfolio = ({ projects }: PortfolioProps) => {
+const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: PortfolioProject['featured_image']): string | null => {
     if (!fileField) return null;
@@ -130,7 +131,30 @@ const Portfolio = ({ projects }: PortfolioProps) => {
 
                 {/* Links */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
-                  {project.live_url && (
+                  {project.project_link && (
+                    <a
+                      href={project.project_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+                    >
+                      <Link className="w-4 h-4 mr-1" />
+                      View Project
+                    </a>
+                  )}
+                  {project.github_repository_link && (
+                    <a
+                      href={project.github_repository_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+                    >
+                      <Github className="w-4 h-4 mr-1" />
+                      Code
+                    </a>
+                  )}
+                  {/* Fallback to old fields if new ones aren't available */}
+                  {!project.project_link && project.live_url && (
                     <a
                       href={project.live_url}
                       target="_blank"
@@ -141,7 +165,7 @@ const Portfolio = ({ projects }: PortfolioProps) => {
                       Live Demo
                     </a>
                   )}
-                  {project.github_url && (
+                  {!project.github_repository_link && project.github_url && (
                     <a
                       href={project.github_url}
                       target="_blank"
@@ -167,21 +191,23 @@ const Portfolio = ({ projects }: PortfolioProps) => {
           </div>
         )}
 
-        {/* Call to Action */}
-        <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">
-            Interested in seeing more of my work?
-          </p>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 border border-border rounded-full font-medium hover:bg-muted transition-colors"
-          >
-            <Github className="w-5 h-5 mr-2" />
-            View All Projects on GitHub
-          </a>
-        </div>
+        {/* Call to Action - Only show if GitHub URL is configured */}
+        {siteConfig?.github_url && (
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-4">
+              Interested in seeing more of my work?
+            </p>
+            <a
+              href={siteConfig.github_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-6 py-3 border border-border rounded-full font-medium hover:bg-muted transition-colors"
+            >
+              <Github className="w-5 h-5 mr-2" />
+              View All Projects on GitHub
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
