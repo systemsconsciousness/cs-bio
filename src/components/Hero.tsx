@@ -48,16 +48,14 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           {/* Profile Image */}
           <div className="relative inline-block">
             {avatarUrl ? (
-              <div className="w-40 h-40 rounded-full mx-auto mb-8 border-4 border-accent p-1 bg-accent">
-                <Image
-                  src={avatarUrl}
-                  alt={siteConfig?.owner_name || 'Profile'}
-                  width={160}
-                  height={160}
-                  className="w-full h-full rounded-full object-cover"
-                  unoptimized={true}
-                />
-              </div>
+              <Image
+                src={avatarUrl}
+                alt={siteConfig?.owner_name || 'Profile'}
+                width={160}
+                height={160}
+                className="w-40 h-40 rounded-full mx-auto mb-8 object-cover"
+                unoptimized={true}
+              />
             ) : (
               <div className="w-40 h-40 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
                 <span className="text-accent-foreground text-5xl font-bold">
@@ -69,11 +67,11 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
 
           {/* Hero Text */}
           <div className="space-y-4 sm:space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
               <span className="block text-foreground">
                 {siteConfig?.owner_name || content?.hero_headline || 'Your Name'}
               </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70 pb-2">
                 {siteConfig?.site_subtitle || content?.hero_headline || 'Creator & Developer'}
               </span>
             </h1>
