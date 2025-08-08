@@ -51,14 +51,14 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
               <Image
                 src={avatarUrl}
                 alt={siteConfig?.owner_name || 'Profile'}
-                width={128}
-                height={128}
-                className="w-32 h-32 rounded-full mx-auto mb-8 object-cover border-4 border-accent/20"
+                width={160}
+                height={160}
+                className="w-40 h-40 rounded-full mx-auto mb-8 object-cover border-4 border-accent"
                 unoptimized={true}
               />
             ) : (
-              <div className="w-32 h-32 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
-                <span className="text-accent-foreground text-4xl font-bold">
+              <div className="w-40 h-40 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
+                <span className="text-accent-foreground text-5xl font-bold">
                   {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
                 </span>
               </div>
