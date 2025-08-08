@@ -1,4 +1,4 @@
-import { Mail, MessageCircle, Send } from 'lucide-react';
+import { Mail, MessageCircle, ExternalLink } from 'lucide-react';
 import { HomePageContent } from '@/lib/contentstack';
 
 interface ContactProps {
@@ -14,135 +14,66 @@ const Contact = ({ content }: ContactProps) => {
             Contact
           </h2>
           <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Let&apos;s Work Together
+            Let&apos;s Connect
           </h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have a project in mind? I&apos;d love to hear about it. Send me a message and let&apos;s discuss how we can bring your ideas to life.
+            Have a project in mind or want to collaborate? I&apos;d love to hear from you. Reach out through any of the channels below.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Contact Information */}
-          <div className="space-y-6 lg:space-y-8">
-            <div>
-              <h4 className="text-lg sm:text-xl font-bold text-foreground mb-3 sm:mb-4">Get in Touch</h4>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4 sm:mb-6">
-                I&apos;m always interested in new opportunities and collaborations. Whether you have a project, 
-                a question, or just want to say hello, feel free to reach out!
-              </p>
-            </div>
-
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="bg-accent/10 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-foreground text-sm sm:text-base">Email</p>
-                  <a 
-                    href={`mailto:${content?.contact_email || 'hello@example.com'}`}
-                    className="text-sm sm:text-base text-muted-foreground hover:text-accent transition-colors break-all"
-                  >
-                    {content?.contact_email || 'hello@example.com'}
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="bg-accent/10 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                  <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+        <div className="max-w-2xl mx-auto">
+          {/* Contact Information Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Email Card */}
+            <div className="bg-background rounded-2xl border border-border p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="bg-accent/10 p-3 rounded-lg flex-shrink-0">
+                  <Mail className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground text-sm sm:text-base">Response Time</p>
-                  <p className="text-sm sm:text-base text-muted-foreground">Usually within 24 hours</p>
+                  <h4 className="font-semibold text-foreground">Email</h4>
+                  <p className="text-sm text-muted-foreground">Direct contact</p>
                 </div>
               </div>
+              <a 
+                href={`mailto:${content?.contact_email || 'hello@example.com'}`}
+                className="text-accent hover:text-accent/80 transition-colors font-medium break-all"
+              >
+                {content?.contact_email || 'hello@example.com'}
+              </a>
             </div>
 
-            {/* Quick Contact Buttons */}
-            <div className="space-y-3">
-              <a
-                href={`mailto:${content?.contact_email || 'hello@example.com'}`}
-                className="w-full inline-flex items-center justify-center px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/90 transition-colors"
-              >
-                <Mail className="w-5 h-5 mr-2" />
-                Send Email
-              </a>
+            {/* LinkedIn Card */}
+            <div className="bg-background rounded-2xl border border-border p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="bg-accent/10 p-3 rounded-lg flex-shrink-0">
+                  <ExternalLink className="w-6 h-6 text-accent" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-foreground">LinkedIn</h4>
+                  <p className="text-sm text-muted-foreground">Professional network</p>
+                </div>
+              </div>
               <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg font-medium hover:bg-muted transition-colors"
+                className="text-accent hover:text-accent/80 transition-colors font-medium"
               >
-                Connect on LinkedIn
+                Connect with me
               </a>
             </div>
           </div>
 
-          {/* Contact Form */}
-          <div className="bg-background rounded-2xl border border-border p-4 sm:p-6 lg:p-8">
-            <form className="space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-muted/30 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-muted/30 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors"
-                    placeholder="your@email.com"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-muted/30 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors"
-                  placeholder="Project inquiry"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={5}
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-muted/30 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors resize-none"
-                  placeholder="Tell me about your project..."
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full inline-flex items-center justify-center px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/90 transition-colors"
-              >
-                <Send className="w-5 h-5 mr-2" />
-                Send Message
-              </button>
-            </form>
+          {/* Response Info */}
+          <div className="bg-background rounded-2xl border border-border p-6 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <MessageCircle className="w-5 h-5 text-accent" />
+              <h4 className="font-semibold text-foreground">Response Time</h4>
+            </div>
+            <p className="text-muted-foreground">
+              I typically respond within 24 hours. Looking forward to hearing from you!
+            </p>
           </div>
         </div>
       </div>

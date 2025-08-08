@@ -30,6 +30,13 @@ export interface SiteConfiguration {
     filename?: string;
     uid?: string;
   }[] | string;
+  years_experience?: number;
+  work_location?: string;
+  projects_completed?: number;
+  technologies_count?: number;
+  time_zone?: string;
+  primary_color?: string;
+  secondary_color?: string;
 }
 
 export interface HomePageContent {

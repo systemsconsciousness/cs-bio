@@ -101,6 +101,69 @@ const contentTypes = {
           rich_text_type: "standard"
         },
         unique: false
+      },
+      {
+        display_name: "Years of Experience",
+        uid: "years_experience",
+        data_type: "number",
+        field_metadata: {
+          description: "Number of years of professional experience"
+        },
+        unique: false
+      },
+      {
+        display_name: "Work Location",
+        uid: "work_location",
+        data_type: "text",
+        field_metadata: {
+          description: "Primary work location (e.g., Remote, San Francisco, etc.)"
+        },
+        unique: false
+      },
+      {
+        display_name: "Projects Completed",
+        uid: "projects_completed",
+        data_type: "number",
+        field_metadata: {
+          description: "Total number of projects completed"
+        },
+        unique: false
+      },
+      {
+        display_name: "Technologies Count",
+        uid: "technologies_count",
+        data_type: "number",
+        field_metadata: {
+          description: "Number of technologies you work with"
+        },
+        unique: false
+      },
+      {
+        display_name: "Time Zone",
+        uid: "time_zone",
+        data_type: "text",
+        field_metadata: {
+          description: "Your primary time zone (e.g., PST, EST, UTC+2)"
+        },
+        unique: false
+      },
+      {
+        display_name: "Primary Color",
+        uid: "primary_color",
+        data_type: "text",
+        field_metadata: {
+          description: "Primary brand color (hex code, e.g., #3b82f6)"
+        },
+        unique: false
+      },
+      {
+        display_name: "Secondary Color",
+        uid: "secondary_color",
+        data_type: "text",
+        field_metadata: {
+          description: "Secondary brand color (hex code, e.g., #1e40af)"
+        },
+        unique: false
       }
     ]
   },
@@ -310,7 +373,14 @@ const sampleContent = {
     site_subtitle: "Welcome to my digital space",
     owner_name: "Your Name",
     owner_email: "hello@example.com", 
-    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey."
+    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey.",
+    years_experience: 3,
+    work_location: "Remote",
+    projects_completed: 50,
+    technologies_count: 10,
+    time_zone: "PST",
+    primary_color: "#3b82f6",
+    secondary_color: "#1e40af"
   },
   home_page: {
     title: "Welcome to My Bio Site",
