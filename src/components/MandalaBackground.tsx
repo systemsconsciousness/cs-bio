@@ -8,7 +8,7 @@ interface MandalaBackgroundProps {
 
 const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const [time, setTime] = useState(0);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
 
     return () => {
       window.removeEventListener('resize', updateCanvasSize);
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
     };
