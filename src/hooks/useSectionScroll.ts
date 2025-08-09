@@ -100,12 +100,12 @@ export const useSectionScroll = () => {
           }
         }
       }
-    } catch (error) {
+    } catch {
       // Scroll was interrupted, this is normal
     } finally {
       isScrollingRef.current = false;
     }
-  }, []);
+  }, [smoothScrollToElement]);
 
   // Add event listeners to detect user interaction and stop scrolling
   const addInterruptListeners = useCallback(() => {
