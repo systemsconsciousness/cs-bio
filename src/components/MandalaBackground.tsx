@@ -11,7 +11,6 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const animationRef = useRef<number | null>(null);
   const [time, setTime] = useState(0);
   const [isClient, setIsClient] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   // Ensure this only runs on the client
@@ -41,7 +40,6 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Create speed multiplier: 0.1x at edges, 8x at center
       const speed = 0.1 + (1 - normalizedDistance) * 7.9; // 0.1 to 8.0
       
-      setMousePosition({ x: event.clientX, y: event.clientY });
       setSpeedMultiplier(speed);
     };
 
