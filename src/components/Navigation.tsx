@@ -97,7 +97,14 @@ const Navigation = ({ siteName }: NavigationProps) => {
     updateThemeClasses(systemPrefersDark);
   };
 
-  const navItems = [
+  type NavItem = {
+    id?: string;
+    href?: string;
+    label: string;
+    isExternal: boolean;
+  };
+
+  const navItems: NavItem[] = [
     { id: 'home', label: 'Home', isExternal: false },
     { id: 'about', label: 'About', isExternal: false },
     { id: 'work', label: 'Experience', isExternal: false },
@@ -125,7 +132,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
             {navItems.map((item) => (
               item.isExternal ? (
                 <Link
-                  key={item.href}
+                  key={item.href || item.label}
                   href={item.href!}
                   className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                 >
@@ -133,7 +140,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 </Link>
               ) : (
                 <button
-                  key={item.id}
+                  key={item.id || item.label}
                   onClick={() => scrollToSection(item.id!)}
                   className={`transition-colors duration-200 cursor-pointer ${
                     activeSection === item.id
@@ -176,7 +183,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                                 {navItems.map((item) => (
                     item.isExternal ? (
                       <Link
-                        key={item.href}
+                        key={item.href || item.label}
                         href={item.href!}
                         className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
                         onClick={() => setIsOpen(false)}
@@ -185,7 +192,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                       </Link>
                     ) : (
                       <button
-                        key={item.id}
+                        key={item.id || item.label}
                         onClick={() => scrollToSection(item.id!)}
                         className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
                           activeSection === item.id

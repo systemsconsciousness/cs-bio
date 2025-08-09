@@ -6,6 +6,7 @@ import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 import dynamic from 'next/dynamic';
 import { useScrollOpacity } from '@/hooks/useScrollOpacity';
 import { useSectionScroll } from '@/hooks/useSectionScroll';
+import { useState, useEffect, useRef } from 'react';
 
 // Dynamically import MandalaBackground to avoid SSR issues
 const MandalaBackground = dynamic(() => import('./MandalaBackground'), {
@@ -21,6 +22,8 @@ interface HeroProps {
 const Hero = ({ content, siteConfig }: HeroProps) => {
   const mandalaOpacity = useScrollOpacity(800); // Longer fade distance for full screen
   const { scrollThroughSections, addInterruptListeners } = useSectionScroll();
+  const [avatarScale, setAvatarScale] = useState(0.85); // Start smaller (85% of normal size)
+  const avatarRef = useRef<HTMLDivElement>(null);
 
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
@@ -55,6 +58,41 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const avatarUrl = getFileUrl(siteConfig?.avatar_photo);
   const resumeUrl = getFileUrl(siteConfig?.resume_cv);
 
+  // Mouse proximity effect for avatar
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!avatarRef.current) return;
+
+      const avatarRect = avatarRef.current.getBoundingClientRect();
+      const avatarCenterX = avatarRect.left + avatarRect.width / 2;
+      const avatarCenterY = avatarRect.top + avatarRect.height / 2;
+
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+
+      // Calculate distance from mouse to avatar center
+      const distance = Math.sqrt(
+        Math.pow(mouseX - avatarCenterX, 2) + Math.pow(mouseY - avatarCenterY, 2)
+      );
+
+      // Define proximity thresholds
+      const maxDistance = 300; // Max distance for effect
+      const minDistance = 50;  // Min distance for max scale
+
+      if (distance <= maxDistance) {
+        // Calculate scale based on inverse distance (closer = bigger)
+        const proximityFactor = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
+        const scale = 0.85 + (proximityFactor * 0.35); // Scale from 0.85 to 1.2
+        setAvatarScale(Math.min(scale, 1.2));
+      } else {
+        setAvatarScale(0.85); // Default smaller size
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const handleViewMyWork = () => {
     // Set up interrupt listeners and start scrolling immediately
     const removeListeners = addInterruptListeners();
@@ -76,16 +114,23 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <div className="space-y-8">
           {/* Profile Image */}
-          <div className="relative inline-block">
+          <div 
+            ref={avatarRef}
+            className="relative inline-block"
+            style={{ 
+              transform: `scale(${avatarScale})`,
+              transition: 'transform 0.2s ease-out'
+            }}
+          >
             {avatarUrl ? (
-                      <Image
-          src={avatarUrl}
-          alt={siteConfig?.owner_name || 'Profile'}
-          width={200}
-          height={200}
-          className="w-50 h-50 rounded-full mx-auto mb-8 object-cover border-8 border-accent/20"
-          unoptimized={true}
-        />
+              <Image
+                src={avatarUrl}
+                alt={siteConfig?.owner_name || 'Profile'}
+                width={200}
+                height={200}
+                className="w-50 h-50 rounded-full mx-auto mb-8 object-cover border-8 border-accent/20"
+                unoptimized={true}
+              />
             ) : (
               <div className="w-50 h-50 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
                 <span className="text-accent-foreground text-6xl font-bold">
