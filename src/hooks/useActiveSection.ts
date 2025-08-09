@@ -8,13 +8,14 @@ export const useActiveSection = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    // If we're on the blog page or any blog post, set active section to 'blog'
+    // If we're on a blog route (/blog or /blog/[slug]), set active section to 'blog'
     if (pathname.startsWith('/blog')) {
       setActiveSection('blog');
       return;
     }
 
-    const sections = ['home', 'about', 'work', 'portfolio', 'contact'];
+    // For main page, detect sections by scroll position
+    const sections = ['home', 'about', 'work', 'portfolio', 'blog', 'contact'];
     
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 100; // Account for header height
