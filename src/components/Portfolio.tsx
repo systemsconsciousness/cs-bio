@@ -1,6 +1,8 @@
 import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
 import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
+import { useState, useRef } from 'react';
+import SparkleEffect from './SparkleEffect';
 
 interface PortfolioProps {
   projects: PortfolioProject[];
@@ -8,6 +10,8 @@ interface PortfolioProps {
 }
 
 const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
+  const [hoveredProject, setHoveredProject] = useState<string | null>(null);
+  
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: PortfolioProject['featured_image']): string | null => {
     if (!fileField) return null;
@@ -56,12 +60,22 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project) => {
             const featuredImageUrl = getFileUrl(project.featured_image);
+            const projectRef = useRef<HTMLDivElement>(null);
             
             return (
               <div
                 key={project.uid}
-                className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                ref={projectRef}
+                className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative"
+                onMouseEnter={() => setHoveredProject(project.uid)}
+                onMouseLeave={() => setHoveredProject(null)}
               >
+                <SparkleEffect 
+                  isHovered={hoveredProject === project.uid}
+                  containerRef={projectRef}
+                  intensity={0.8}
+                  color="#7c4dff"
+                />
                 {/* Project Image */}
                 <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 overflow-hidden">
                   {featuredImageUrl ? (

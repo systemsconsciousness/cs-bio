@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useScrollOpacity } from '@/hooks/useScrollOpacity';
 import { useSectionScroll } from '@/hooks/useSectionScroll';
 import { useState, useEffect, useRef } from 'react';
+import SparkleEffect from './SparkleEffect';
 
 // Dynamically import MandalaBackground to avoid SSR issues
 const MandalaBackground = dynamic(() => import('./MandalaBackground'), {
@@ -24,6 +25,9 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const { scrollThroughSections, addInterruptListeners } = useSectionScroll();
   const [avatarScale, setAvatarScale] = useState(0.85); // Start smaller (85% of normal size)
   const avatarRef = useRef<HTMLDivElement>(null);
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const viewWorkRef = useRef<HTMLButtonElement>(null);
+  const resumeRef = useRef<HTMLAnchorElement>(null);
 
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
@@ -76,16 +80,16 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
       );
 
       // Define proximity thresholds
-      const maxDistance = 300; // Max distance for effect
-      const minDistance = 50;  // Min distance for max scale
+      const maxDistance = 250; // Max distance for effect (reduced)
+      const minDistance = 80;  // Min distance for max scale (increased for gentler effect)
 
       if (distance <= maxDistance) {
-        // Calculate scale based on inverse distance (closer = bigger)
+        // Calculate scale based on inverse distance (closer = bigger) - much more subtle
         const proximityFactor = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
-        const scale = 0.85 + (proximityFactor * 0.35); // Scale from 0.85 to 1.2
-        setAvatarScale(Math.min(scale, 1.2));
+        const scale = 0.92 + (proximityFactor * 0.12); // Scale from 0.92 to 1.04 (much smaller range)
+        setAvatarScale(Math.min(scale, 1.04));
       } else {
-        setAvatarScale(0.85); // Default smaller size
+        setAvatarScale(0.92); // Default size closer to normal
       }
     };
 
@@ -119,7 +123,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
             className="relative inline-block"
             style={{ 
               transform: `scale(${avatarScale})`,
-              transition: 'transform 0.2s ease-out'
+              transition: 'transform 0.8s ease-out'
             }}
           >
             {avatarUrl ? (
@@ -159,23 +163,45 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           {/* CTA Buttons */}
           <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md sm:max-w-none mx-auto ${!resumeUrl ? 'sm:max-w-xs' : ''}`}>
             <button
+              ref={viewWorkRef}
               onClick={handleViewMyWork}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 gradient-1 text-white rounded-full font-medium hover:opacity-90 transition-all duration-300 transform hover:scale-105 cursor-pointer"
+              onMouseEnter={() => setHoveredButton('viewWork')}
+              onMouseLeave={() => setHoveredButton(null)}
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 gradient-1 text-white rounded-full font-medium hover:opacity-90 transition-all duration-300 transform hover:scale-105 cursor-pointer relative overflow-hidden"
             >
-              View My Work
-              <ArrowDown className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
+              <SparkleEffect 
+                isHovered={hoveredButton === 'viewWork'}
+                containerRef={viewWorkRef}
+                intensity={1.2}
+                color="#ffffff"
+              />
+              <span className="relative z-10">
+                View My Work
+                <ArrowDown className="ml-2 w-4 sm:w-5 h-4 sm:h-5 inline" />
+              </span>
             </button>
             
             {resumeUrl && (
               <a
+                ref={resumeRef}
                 href={resumeUrl}
                 download
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-border rounded-full font-medium hover:bg-muted transition-all duration-300"
+                onMouseEnter={() => setHoveredButton('resume')}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-border rounded-full font-medium hover:bg-muted transition-all duration-300 relative overflow-hidden"
               >
-                <Download className="mr-2 w-4 sm:w-5 h-4 sm:h-5" />
-                Download CV
+                <SparkleEffect 
+                  isHovered={hoveredButton === 'resume'}
+                  containerRef={resumeRef}
+                  intensity={0.8}
+                  color="#7c4dff"
+                />
+                <span className="relative z-10">
+                  <Download className="mr-2 w-4 sm:w-5 h-4 sm:h-5" />
+                  Download CV
+                </span>
               </a>
             )}
           </div>

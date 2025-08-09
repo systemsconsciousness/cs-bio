@@ -1,12 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export const useActiveSection = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const pathname = usePathname();
 
   useEffect(() => {
-    const sections = ['home', 'about', 'work', 'portfolio', 'blog', 'contact'];
+    // If we're on the blog page or any blog post, set active section to 'blog'
+    if (pathname.startsWith('/blog')) {
+      setActiveSection('blog');
+      return;
+    }
+
+    const sections = ['home', 'about', 'work', 'portfolio', 'contact'];
     
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 100; // Account for header height
@@ -36,7 +44,7 @@ export const useActiveSection = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [pathname]);
 
   return activeSection;
 };

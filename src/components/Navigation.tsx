@@ -129,12 +129,21 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              item.isExternal ? (
+            {navItems.map((item) => {
+              // Determine if this item should be highlighted
+              const isActive = item.isExternal 
+                ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
+                : (activeSection === item.id); // For internal sections: check section id
+
+              return item.isExternal ? (
                 <Link
                   key={item.href || item.label}
                   href={item.href!}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                  className={`transition-colors duration-200 ${
+                    isActive
+                      ? 'text-foreground gradient-text-1 font-semibold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
                 >
                   {item.label}
                 </Link>
@@ -143,15 +152,15 @@ const Navigation = ({ siteName }: NavigationProps) => {
                   key={item.id || item.label}
                   onClick={() => scrollToSection(item.id!)}
                   className={`transition-colors duration-200 cursor-pointer ${
-                    activeSection === item.id
+                    isActive
                       ? 'text-foreground gradient-text-1 font-semibold'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {item.label}
                 </button>
-              )
-            ))}
+              );
+            })}
           </div>
 
           {/* Theme Toggle & Mobile Menu Button */}
@@ -180,12 +189,21 @@ const Navigation = ({ siteName }: NavigationProps) => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t border-border">
-                                {navItems.map((item) => (
-                    item.isExternal ? (
+                                {navItems.map((item) => {
+                    // Determine if this item should be highlighted
+                    const isActive = item.isExternal 
+                      ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
+                      : (activeSection === item.id); // For internal sections: check section id
+
+                    return item.isExternal ? (
                       <Link
                         key={item.href || item.label}
                         href={item.href!}
-                        className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                        className={`block px-3 py-2 transition-colors ${
+                          isActive
+                            ? 'text-foreground gradient-text-1 font-semibold'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
                         onClick={() => setIsOpen(false)}
                       >
                         {item.label}
@@ -195,15 +213,15 @@ const Navigation = ({ siteName }: NavigationProps) => {
                         key={item.id || item.label}
                         onClick={() => scrollToSection(item.id!)}
                         className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
-                          activeSection === item.id
+                          isActive
                             ? 'text-foreground gradient-text-1 font-semibold'
                             : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
                         {item.label}
                       </button>
-                    )
-                  ))}
+                    );
+                  })}
             </div>
           </div>
         )}
