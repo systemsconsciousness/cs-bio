@@ -7,9 +7,9 @@ export const useSectionScroll = () => {
     // Define the sections in order
     const sections = ['about', 'work', 'portfolio', 'blog', 'contact'];
     
-    // Duration for each scroll and pause
-    const scrollDuration = 800; // ms to scroll to section
-    const pauseDuration = 1200; // ms to pause at each section
+    // Duration for each scroll and pause - much slower and more luxurious
+    const scrollDuration = 1800; // ms to scroll to section (was 800)
+    const pauseDuration = 2500; // ms to pause at each section (was 1200)
     
     for (let i = 0; i < sections.length; i++) {
       const sectionId = sections[i];

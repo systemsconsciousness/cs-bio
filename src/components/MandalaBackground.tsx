@@ -11,11 +11,46 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const animationRef = useRef<number | null>(null);
   const [time, setTime] = useState(0);
   const [isClient, setIsClient] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   // Ensure this only runs on the client
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Mouse tracking effect
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      // Calculate distance from center
+      const deltaX = event.clientX - centerX;
+      const deltaY = event.clientY - centerY;
+      const distanceFromCenter = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      // Calculate maximum possible distance (corner to center)
+      const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+      
+      // Normalize distance (0 = center, 1 = edge)
+      const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+      
+      // Create speed multiplier: 0.1x at edges, 8x at center
+      const speed = 0.1 + (1 - normalizedDistance) * 7.9; // 0.1 to 8.0
+      
+      setMousePosition({ x: event.clientX, y: event.clientY });
+      setSpeedMultiplier(speed);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isClient]);
 
   useEffect(() => {
     if (!isClient) return;
@@ -60,7 +95,8 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       for (let layer = 0; layer < layers; layer++) {
         const radius = (maxRadius / layers) * (layer + 1) * 0.4;
         const petals = 6 + layer * 3;
-        const rotationSpeed = (layer % 2 === 0 ? 1 : -1) * 0.08; // Much slower
+        const baseRotationSpeed = (layer % 2 === 0 ? 1 : -1) * 0.08;
+        const rotationSpeed = baseRotationSpeed * speedMultiplier; // Mouse-responsive speed
         const rotation = (time * rotationSpeed + layer * 45) * Math.PI / 180;
 
         for (let i = 0; i < petals; i++) {
@@ -96,9 +132,9 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           ctx.fillStyle = gradient;
           ctx.beginPath();
           
-          // Create varied circle shapes instead of ellipses
+          // Create varied circle shapes with mouse-responsive animation
           const baseSize = 6 + layer * 3;
-          const sizeVariation = Math.sin(time * 0.02 + i * 0.5 + layer * 0.3) * 0.5 + 1; // 0.5 to 1.5 multiplier
+          const sizeVariation = Math.sin(time * 0.02 * speedMultiplier + i * 0.5 + layer * 0.3) * 0.5 + 1;
           const circleSize = baseSize * sizeVariation;
           
           ctx.arc(x, y, circleSize, 0, Math.PI * 2);
@@ -123,9 +159,9 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         }
       }
 
-      // Central mandala core with new gradient palette
+      // Central mandala core with mouse-responsive gradient
       const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
-      const corePhase = Math.floor(time * 0.02) % 3;
+      const corePhase = Math.floor(time * 0.02 * speedMultiplier) % 3;
       
       if (corePhase === 0) {
         // Core using palette 1
@@ -148,15 +184,15 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
       
-      // Breathing central core
-      const coreBreathing = Math.sin(time * 0.03) * 0.3 + 1; // 0.7 to 1.3 multiplier
+      // Mouse-responsive breathing central core
+      const coreBreathing = Math.sin(time * 0.03 * speedMultiplier) * 0.3 + 1; // 0.7 to 1.3 multiplier
       const coreSize = 50 * coreBreathing;
       
       ctx.arc(centerX, centerY, coreSize, 0, Math.PI * 2);
       ctx.fill();
 
-      // Update time for next frame - much slower
-      setTime(prev => prev + 0.1);
+      // Update time for next frame - base speed with mouse multiplier
+      setTime(prev => prev + (0.1 * speedMultiplier));
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -170,7 +206,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [time, isClient]);
+  }, [time, isClient, speedMultiplier]);
 
   // Don't render anything on the server
   if (!isClient) {
