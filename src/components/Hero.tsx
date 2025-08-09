@@ -110,10 +110,12 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background relative overflow-hidden">
-      {/* Mandala Background - Full Screen */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
-        <MandalaBackground opacity={mandalaOpacity} />
-      </div>
+      {/* Mandala Background - Full Screen (conditionally rendered) */}
+      {(siteConfig?.enable_mandala_background !== false) && (
+        <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
+          <MandalaBackground opacity={mandalaOpacity} />
+        </div>
+      )}
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <div className="space-y-8">

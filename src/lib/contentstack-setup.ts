@@ -174,6 +174,15 @@ const contentTypes = {
           description: "Your LinkedIn profile URL (e.g., https://linkedin.com/in/username)"
         },
         unique: false
+      },
+      {
+        display_name: "Enable Mandala Background",
+        uid: "enable_mandala_background",
+        data_type: "boolean",
+        field_metadata: {
+          description: "Show the interactive mandala background effect on the hero section (default: enabled)"
+        },
+        unique: false
       }
     ]
   },
@@ -426,7 +435,8 @@ const sampleContent = {
     technologies_count: 10,
     time_zone: "PST",
     github_url: "https://github.com/username",
-    linkedin_url: "https://linkedin.com/in/username"
+    linkedin_url: "https://linkedin.com/in/username",
+    enable_mandala_background: true
   },
   home_page: {
     title: "Welcome to My Bio Site",

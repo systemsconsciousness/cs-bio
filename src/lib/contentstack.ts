@@ -48,6 +48,7 @@ export interface SiteConfiguration {
   time_zone?: string;
   github_url?: string;
   linkedin_url?: string;
+  enable_mandala_background?: boolean;
 }
 
 export interface HomePageContent {
