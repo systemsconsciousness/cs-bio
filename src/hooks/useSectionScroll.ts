@@ -62,7 +62,7 @@ export const useSectionScroll = () => {
 
       animationFrameRef.current = requestAnimationFrame(animate);
     });
-  }, []);
+  }, [smoothLuxuryEase]);
 
   const scrollThroughSections = useCallback(async () => {
     // Define the sections in order

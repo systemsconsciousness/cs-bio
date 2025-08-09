@@ -3,7 +3,7 @@
 import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
 import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import SparkleEffect from './SparkleEffect';
 
 interface PortfolioProps {
@@ -14,15 +14,14 @@ interface PortfolioProps {
 const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   
-  // Create refs for each project outside the render loop
-  const projectRefs = useRef<{ [key: string]: React.RefObject<HTMLDivElement> }>({});
-  
-  // Initialize refs for all projects
-  projects.forEach(project => {
-    if (!projectRefs.current[project.uid]) {
-      projectRefs.current[project.uid] = useRef<HTMLDivElement>(null);
-    }
-  });
+  // Create refs for each project using useMemo to avoid hook rule violations
+  const projectRefs = useMemo(() => {
+    const refs: { [key: string]: React.RefObject<HTMLDivElement> } = {};
+    projects.forEach(project => {
+      refs[project.uid] = { current: null };
+    });
+    return refs;
+  }, [projects]);
   
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: PortfolioProject['featured_image']): string | null => {
@@ -72,7 +71,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project) => {
             const featuredImageUrl = getFileUrl(project.featured_image);
-            const projectRef = projectRefs.current[project.uid];
+            const projectRef = projectRefs[project.uid];
             
             return (
               <div
