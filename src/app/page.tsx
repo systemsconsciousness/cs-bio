@@ -45,9 +45,9 @@ export default async function Home() {
       <Hero content={homeContent} siteConfig={siteConfig} />
       <About content={homeContent} siteConfig={siteConfig} />
       <WorkExperience experiences={workExperiences} />
-      <Portfolio projects={portfolioProjects} />
+      <Portfolio projects={portfolioProjects} siteConfig={siteConfig} />
       <Blog posts={blogPosts} />
-      <Contact content={homeContent} />
+      <Contact content={homeContent} siteConfig={siteConfig} />
     </div>
   );
 }

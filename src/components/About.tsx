@@ -13,7 +13,7 @@ const About = ({ content, siteConfig }: AboutProps) => {
           {/* Content */}
           <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
             <div>
-              <h2 className="text-sm font-semibold text-accent uppercase tracking-wide mb-2">
+              <h2 className="text-sm font-semibold gradient-text-1 uppercase tracking-wide mb-2">
                 About Me
               </h2>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 sm:mb-6">
@@ -43,7 +43,7 @@ const About = ({ content, siteConfig }: AboutProps) => {
                   </a>
                 </p>
                 <p className="text-muted-foreground">
-                  <span className="font-medium">Location:</span> Remote / Global
+                  <span className="font-medium">Location:</span> {siteConfig?.work_location || 'Remote / Global'}
                 </p>
               </div>
             </div>
@@ -52,20 +52,28 @@ const About = ({ content, siteConfig }: AboutProps) => {
           {/* Stats/Highlights */}
           <div className="grid grid-cols-2 gap-4 sm:gap-6 order-1 lg:order-2">
             <div className="bg-background p-4 sm:p-6 rounded-2xl border border-border hover:shadow-lg transition-shadow">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">3+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">
+                {siteConfig?.years_experience ? `${siteConfig.years_experience}+` : '3+'}
+              </div>
               <div className="text-sm sm:text-base text-muted-foreground">Years Experience</div>
             </div>
             <div className="bg-background p-4 sm:p-6 rounded-2xl border border-border hover:shadow-lg transition-shadow">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">50+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">
+                {siteConfig?.projects_completed ? `${siteConfig.projects_completed}+` : '50+'}
+              </div>
               <div className="text-sm sm:text-base text-muted-foreground">Projects Completed</div>
             </div>
             <div className="bg-background p-4 sm:p-6 rounded-2xl border border-border hover:shadow-lg transition-shadow">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">10+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">
+                {siteConfig?.technologies_count ? `${siteConfig.technologies_count}+` : '10+'}
+              </div>
               <div className="text-sm sm:text-base text-muted-foreground">Technologies</div>
             </div>
             <div className="bg-background p-4 sm:p-6 rounded-2xl border border-border hover:shadow-lg transition-shadow">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">24/7</div>
-              <div className="text-sm sm:text-base text-muted-foreground">Availability</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1 sm:mb-2">
+                {siteConfig?.time_zone || 'PST'}
+              </div>
+              <div className="text-sm sm:text-base text-muted-foreground">Time Zone</div>
             </div>
           </div>
         </div>

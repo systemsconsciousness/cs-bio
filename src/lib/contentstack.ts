@@ -30,6 +30,25 @@ export interface SiteConfiguration {
     filename?: string;
     uid?: string;
   }[] | string;
+  resume_cv?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
+  years_experience?: number;
+  work_location?: string;
+  projects_completed?: number;
+  technologies_count?: number;
+  time_zone?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  enable_mandala_background?: boolean;
 }
 
 export interface HomePageContent {
@@ -50,6 +69,17 @@ export interface BlogPost {
   author?: string;
   published_date?: string;
   blog_tags?: string[];
+  featured_image?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
   created_at: string;
   updated_at: string;
 }
@@ -76,8 +106,21 @@ export interface PortfolioProject {
   technologies?: string[];
   live_url?: string;
   github_url?: string;
+  project_link?: string;
+  github_repository_link?: string;
   project_type?: string;
   featured?: boolean;
+  featured_image?: {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  } | {
+    url: string;
+    title?: string;
+    filename?: string;
+    uid?: string;
+  }[] | string;
   created_at: string;
   updated_at: string;
 }

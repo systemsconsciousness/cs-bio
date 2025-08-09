@@ -44,6 +44,8 @@ export interface PortfolioProject {
   technologies?: string[];
   live_url?: string;
   github_url?: string;
+  project_link?: string;
+  github_repository_link?: string;
   project_type?: string;
   featured?: boolean;
   created_at: string;
@@ -194,3 +196,21 @@ export const portfolioProjects: PortfolioProject[] = [
     updated_at: "2023-07-15T00:00:00.000Z"
   }
 ];
+
+// Default site configuration for fallback
+export const defaultSiteConfig = {
+  title: "Site Configuration",
+  site_name: "My Personal Website",
+  site_subtitle: "Welcome to my digital space",
+  owner_name: "Your Name",
+  owner_email: "hello@example.com",
+  bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey.",
+  years_experience: 3,
+  work_location: "Remote",
+  projects_completed: 50,
+  technologies_count: 10,
+  time_zone: "PST",
+  github_url: "https://github.com/username",
+  linkedin_url: "https://linkedin.com/in/username",
+  enable_mandala_background: true
+};

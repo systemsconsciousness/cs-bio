@@ -101,6 +101,88 @@ const contentTypes = {
           rich_text_type: "standard"
         },
         unique: false
+      },
+      {
+        display_name: "Resume/CV",
+        uid: "resume_cv",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload your resume or CV (PDF recommended)",
+          rich_text_type: "standard"
+        },
+        unique: false
+      },
+      {
+        display_name: "Years of Experience",
+        uid: "years_experience",
+        data_type: "number",
+        field_metadata: {
+          description: "Number of years of professional experience"
+        },
+        unique: false
+      },
+      {
+        display_name: "Work Location",
+        uid: "work_location",
+        data_type: "text",
+        field_metadata: {
+          description: "Primary work location (e.g., Remote, San Francisco, etc.)"
+        },
+        unique: false
+      },
+      {
+        display_name: "Projects Completed",
+        uid: "projects_completed",
+        data_type: "number",
+        field_metadata: {
+          description: "Total number of projects completed"
+        },
+        unique: false
+      },
+      {
+        display_name: "Technologies Count",
+        uid: "technologies_count",
+        data_type: "number",
+        field_metadata: {
+          description: "Number of technologies you work with"
+        },
+        unique: false
+      },
+      {
+        display_name: "Time Zone",
+        uid: "time_zone",
+        data_type: "text",
+        field_metadata: {
+          description: "Your primary time zone (e.g., PST, EST, UTC+2)"
+        },
+        unique: false
+      },
+      {
+        display_name: "GitHub URL",
+        uid: "github_url",
+        data_type: "text",
+        field_metadata: {
+          description: "Your GitHub profile URL (e.g., https://github.com/username)"
+        },
+        unique: false
+      },
+      {
+        display_name: "LinkedIn URL", 
+        uid: "linkedin_url",
+        data_type: "text",
+        field_metadata: {
+          description: "Your LinkedIn profile URL (e.g., https://linkedin.com/in/username)"
+        },
+        unique: false
+      },
+      {
+        display_name: "Enable Mandala Background",
+        uid: "enable_mandala_background",
+        data_type: "boolean",
+        field_metadata: {
+          description: "Show the interactive mandala background effect on the hero section (default: enabled)"
+        },
+        unique: false
       }
     ]
   },
@@ -191,6 +273,16 @@ const contentTypes = {
         uid: "blog_tags", // Fixed: was "tags" which is restricted
         data_type: "text",
         multiple: true
+      },
+      {
+        display_name: "Featured Image",
+        uid: "featured_image",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload a featured image for this blog post (optional)",
+          rich_text_type: "standard"
+        },
+        unique: false
       }
     ]
   },
@@ -289,6 +381,22 @@ const contentTypes = {
         data_type: "text"
       },
       {
+        display_name: "Project Link",
+        uid: "project_link",
+        data_type: "text",
+        field_metadata: {
+          description: "Link to the project (could be live demo, app store, etc.)"
+        }
+      },
+      {
+        display_name: "GitHub Repository Link",
+        uid: "github_repository_link", 
+        data_type: "text",
+        field_metadata: {
+          description: "Link to the GitHub repository for this specific project"
+        }
+      },
+      {
         display_name: "Project Type",
         uid: "project_type",
         data_type: "text"
@@ -297,6 +405,16 @@ const contentTypes = {
         display_name: "Featured",
         uid: "featured",
         data_type: "boolean"
+      },
+      {
+        display_name: "Featured Image",
+        uid: "featured_image",
+        data_type: "file",
+        field_metadata: {
+          description: "Upload a featured image for this project (optional)",
+          rich_text_type: "standard"
+        },
+        unique: false
       }
     ]
   }
@@ -310,7 +428,15 @@ const sampleContent = {
     site_subtitle: "Welcome to my digital space",
     owner_name: "Your Name",
     owner_email: "hello@example.com", 
-    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey."
+    bio: "I'm a passionate creator building amazing things. Welcome to my personal website where I share my work, thoughts, and journey.",
+    years_experience: 3,
+    work_location: "Remote",
+    projects_completed: 50,
+    technologies_count: 10,
+    time_zone: "PST",
+    github_url: "https://github.com/username",
+    linkedin_url: "https://linkedin.com/in/username",
+    enable_mandala_background: true
   },
   home_page: {
     title: "Welcome to My Bio Site",
@@ -372,6 +498,8 @@ const sampleContent = {
       technologies: ["Next.js", "React", "Stripe", "PostgreSQL"],
       live_url: "https://ecommerce-demo.example.com",
       github_url: "https://github.com/johndoe/ecommerce-platform",
+      project_link: "https://ecommerce-demo.example.com",
+      github_repository_link: "https://github.com/johndoe/ecommerce-platform",
       project_type: "Web Application",
       featured: true
     },
@@ -382,6 +510,8 @@ const sampleContent = {
       technologies: ["React", "Socket.io", "Express.js", "MongoDB"],
       live_url: "https://taskapp-demo.example.com",
       github_url: "https://github.com/johndoe/task-management",
+      project_link: "https://taskapp-demo.example.com",
+      github_repository_link: "https://github.com/johndoe/task-management",
       project_type: "Web Application",
       featured: true
     }

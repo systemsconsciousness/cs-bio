@@ -4,6 +4,7 @@ import {
   blogPosts, 
   workExperiences, 
   portfolioProjects,
+  defaultSiteConfig,
   type HomePageContent,
   type BlogPost,
   type WorkExperience,
@@ -53,6 +54,12 @@ export const getFeaturedProjects = async (): Promise<PortfolioProject[]> => {
     .sort((a, b) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
+};
+
+// Site configuration with fallback
+export const getSiteConfiguration = async () => {
+  await delay(100);
+  return defaultSiteConfig;
 };
 
 // Export types for convenience

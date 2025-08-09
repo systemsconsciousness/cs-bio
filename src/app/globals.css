@@ -6,8 +6,12 @@
   --muted: #f8fafc;
   --muted-foreground: #64748b;
   --border: #e2e8f0;
-  --accent: #3b82f6;
+  --accent: #7c4dff;
   --accent-foreground: #ffffff;
+  --accent-secondary: #1783ff;
+  --accent-tertiary: #ec3cdb;
+  --accent-quaternary: #eb5646;
+  --accent-dark: #253143;
 }
 
 @theme inline {
@@ -18,10 +22,15 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+  --color-accent-quaternary: var(--accent-quaternary);
+  --color-accent-dark: var(--accent-dark);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark mode - both system preference and manual toggle */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -29,9 +38,43 @@
     --muted: #1e293b;
     --muted-foreground: #94a3b8;
     --border: #334155;
-    --accent: #60a5fa;
-    --accent-foreground: #0f172a;
+    --accent: #7c4dff;
+    --accent-foreground: #ffffff;
+    --accent-secondary: #1783ff;
+    --accent-tertiary: #ec3cdb;
+    --accent-quaternary: #eb5646;
+    --accent-dark: #253143;
   }
+}
+
+/* Manual dark mode override */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --accent: #7c4dff;
+  --accent-foreground: #ffffff;
+  --accent-secondary: #1783ff;
+  --accent-tertiary: #ec3cdb;
+  --accent-quaternary: #eb5646;
+  --accent-dark: #253143;
+}
+
+/* Force light mode when explicitly set */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --accent: #7c4dff;
+  --accent-foreground: #ffffff;
+  --accent-secondary: #1783ff;
+  --accent-tertiary: #ec3cdb;
+  --accent-quaternary: #eb5646;
+  --accent-dark: #253143;
 }
 
 * {
@@ -88,6 +131,64 @@ html {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+
+/* Beautiful gradient utilities based on your color schemes */
+.gradient-1 {
+  background: linear-gradient(133.14deg, #7c4dff 29.74%, #1783ff 86.78%);
+}
+
+.gradient-2 {
+  background: linear-gradient(135.75deg, #7c4dff 1.23%, #ec3cdb 37.6%, #eb5646 75.45%);
+}
+
+.gradient-3 {
+  background: linear-gradient(147.12deg, #7c4dff 15.8%, #253143 70.78%);
+}
+
+.gradient-text-1 {
+  background: linear-gradient(133.14deg, #7c4dff 29.74%, #1783ff 86.78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-2 {
+  background: linear-gradient(135.75deg, #7c4dff 1.23%, #ec3cdb 37.6%, #eb5646 75.45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-3 {
+  background: linear-gradient(147.12deg, #7c4dff 15.8%, #253143 70.78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Ensure all clickable elements have pointer cursor */
+button,
+a,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Animated gradient for site title hover */
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
 }
 
 /* Smooth hover animations on devices that support hover */
