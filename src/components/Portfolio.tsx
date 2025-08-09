@@ -136,7 +136,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.project_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       <Link className="w-4 h-4 mr-1" />
                       View Project
@@ -147,7 +147,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.github_repository_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors cursor-pointer"
                     >
                       <Github className="w-4 h-4 mr-1" />
                       Code
@@ -159,7 +159,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.live_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       <ExternalLink className="w-4 h-4 mr-1" />
                       Live Demo
@@ -170,7 +170,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 border border-border rounded-lg text-sm font-medium hover:bg-muted transition-colors cursor-pointer"
                     >
                       <Github className="w-4 h-4 mr-1" />
                       Code
@@ -201,7 +201,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
               href={siteConfig.github_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-6 py-3 border border-border rounded-full font-medium hover:bg-muted transition-colors"
+              className="inline-flex items-center px-6 py-3 border border-border rounded-full font-medium hover:bg-muted transition-colors cursor-pointer"
             >
               <Github className="w-5 h-5 mr-2" />
               View All Projects on GitHub

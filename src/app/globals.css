@@ -167,6 +167,14 @@ html {
   -webkit-text-fill-color: transparent;
 }
 
+/* Ensure all clickable elements have pointer cursor */
+button, 
+a, 
+[role="button"], 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* Smooth hover animations on devices that support hover */
 @media (hover: hover) {
   .hover-lift:hover {

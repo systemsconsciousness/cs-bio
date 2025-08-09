@@ -128,7 +128,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id!)}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
                 >
                   {item.label}
                 </button>
@@ -141,7 +141,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
             <button
               onClick={toggleTheme}
               onDoubleClick={resetToSystemTheme}
-              className="p-2 rounded-lg hover:bg-muted transition-colors"
+              className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
               aria-label="Toggle theme (double-click to reset to system)"
               title="Click to toggle theme, double-click to use system preference"
             >
@@ -150,7 +150,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -176,7 +176,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id!)}
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors w-full text-left"
+                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors w-full text-left cursor-pointer"
                   >
                     {item.label}
                   </button>

@@ -13,6 +13,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const [isClient, setIsClient] = useState(false);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const [targetSpeed, setTargetSpeed] = useState(1);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Ensure this only runs on the client
   useEffect(() => {
@@ -38,10 +39,11 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Normalize distance (0 = center, 1 = edge)
       const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
       
-      // Create speed multiplier: 0.1x at edges, 2.5x at center (much more subtle)
-      const speed = 0.1 + (1 - normalizedDistance) * 2.4; // 0.1 to 2.5
+      // Create speed multiplier: 0.3x at edges, 2.5x at center (never backward)
+      const speed = 0.3 + (1 - normalizedDistance) * 2.2; // 0.3 to 2.5 (always forward)
       
       setTargetSpeed(speed);
+      setMousePos({ x: event.clientX, y: event.clientY });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -87,8 +89,8 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth interpolation towards target speed (lerping)
-      const lerpFactor = 0.02; // How smooth the transition is (lower = smoother)
+      // Enhanced smooth interpolation with more fluid, delayed response
+      const lerpFactor = 0.008; // Much slower transition for more fluid feel (was 0.02)
       const newSpeed = speedMultiplier + (targetSpeed - speedMultiplier) * lerpFactor;
       setSpeedMultiplier(newSpeed);
 
@@ -163,6 +165,25 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         }
       }
 
+      // Ambient mouse highlight effect
+      if (mousePos.x > 0 || mousePos.y > 0) {
+        const highlightGradient = ctx.createRadialGradient(
+          mousePos.x, mousePos.y, 0,
+          mousePos.x, mousePos.y, 250 // Large, ambient radius
+        );
+        
+        // Create subtle, warm highlight that matches our color palette
+        highlightGradient.addColorStop(0, `rgba(124, 77, 255, 0.08)`); // Subtle purple center
+        highlightGradient.addColorStop(0.3, `rgba(23, 131, 255, 0.04)`); // Blue middle
+        highlightGradient.addColorStop(0.6, `rgba(236, 60, 219, 0.02)`); // Pink outer
+        highlightGradient.addColorStop(1, `rgba(124, 77, 255, 0)`); // Fade to transparent
+        
+        ctx.fillStyle = highlightGradient;
+        ctx.beginPath();
+        ctx.arc(mousePos.x, mousePos.y, 250, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       // Central mandala core with mouse-responsive gradient
       const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
       const corePhase = Math.floor(time * 0.02 * speedMultiplier) % 3;
@@ -210,7 +231,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [time, isClient, speedMultiplier, targetSpeed]);
+  }, [time, isClient, speedMultiplier, targetSpeed, mousePos]);
 
   // Don't render anything on the server
   if (!isClient) {

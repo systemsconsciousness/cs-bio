@@ -59,7 +59,7 @@ const Footer = ({ siteConfig }: FooterProps) => {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                  className="p-2 rounded-lg bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
                   aria-label={link.label}
                 >
                   <link.icon className="w-5 h-5" />
@@ -103,7 +103,7 @@ const Footer = ({ siteConfig }: FooterProps) => {
             </p>
             <a
               href="#contact"
-              className="inline-flex items-center px-4 py-2 gradient-1 text-white rounded-lg hover:opacity-90 transition-opacity"
+              className="inline-flex items-center px-4 py-2 gradient-1 text-white rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
             >
               Let&apos;s Connect
             </a>

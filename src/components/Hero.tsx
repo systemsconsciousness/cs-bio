@@ -108,7 +108,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md sm:max-w-none mx-auto ${!resumeUrl ? 'sm:max-w-xs' : ''}`}>
             <button
               onClick={handleViewMyWork}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 gradient-1 text-white rounded-full font-medium hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 gradient-1 text-white rounded-full font-medium hover:opacity-90 transition-all duration-300 transform hover:scale-105 cursor-pointer"
             >
               View My Work
               <ArrowDown className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
