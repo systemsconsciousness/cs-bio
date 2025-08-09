@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+// import Link from 'next/link'; // Temporarily using anchor tags for debugging
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useActiveSection } from '@/hooks/useActiveSection';
@@ -135,31 +135,37 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
                 : (activeSection === item.id); // For internal sections: check section id
 
-              return item.isExternal && item.href ? (
-                <Link
-                  key={item.href || item.label}
-                  href={item.href}
-                  className={`transition-colors duration-200 ${
-                    isActive
-                      ? 'text-foreground gradient-text-1 font-semibold'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ) : !item.isExternal && item.id ? (
-                <button
-                  key={item.id || item.label}
-                  onClick={() => scrollToSection(item.id!)}
-                  className={`transition-colors duration-200 cursor-pointer ${
-                    isActive
-                      ? 'text-foreground gradient-text-1 font-semibold'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ) : null;
+              if (item.isExternal && item.href) {
+                return (
+                  <a
+                    key={item.href || item.label}
+                    href={item.href}
+                    className={`transition-colors duration-200 cursor-pointer hover:opacity-75 ${
+                      isActive
+                        ? 'text-foreground gradient-text-1 font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                    style={{ pointerEvents: 'auto' }}
+                  >
+                    {item.label}
+                  </a>
+                );
+              } else if (!item.isExternal && item.id) {
+                return (
+                  <button
+                    key={item.id || item.label}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`transition-colors duration-200 cursor-pointer ${
+                      isActive
+                        ? 'text-foreground gradient-text-1 font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              }
+              return null;
             })}
           </div>
 
@@ -195,32 +201,41 @@ const Navigation = ({ siteName }: NavigationProps) => {
                       ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
                       : (activeSection === item.id); // For internal sections: check section id
 
-                    return item.isExternal && item.href ? (
-                      <Link
-                        key={item.href || item.label}
-                        href={item.href}
-                        className={`block px-3 py-2 transition-colors ${
-                          isActive
-                            ? 'text-foreground gradient-text-1 font-semibold'
-                            : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    ) : !item.isExternal && item.id ? (
-                      <button
-                        key={item.id || item.label}
-                        onClick={() => scrollToSection(item.id!)}
-                        className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
-                          isActive
-                            ? 'text-foreground gradient-text-1 font-semibold'
-                            : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    ) : null;
+                    if (item.isExternal && item.href) {
+                      return (
+                        <a
+                          key={item.href || item.label}
+                          href={item.href}
+                          className={`block px-3 py-2 transition-colors cursor-pointer hover:opacity-75 ${
+                            isActive
+                              ? 'text-foreground gradient-text-1 font-semibold'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                          style={{ pointerEvents: 'auto' }}
+                        >
+                          {item.label}
+                        </a>
+                      );
+                    } else if (!item.isExternal && item.id) {
+                      return (
+                        <button
+                          key={item.id || item.label}
+                          onClick={() => {
+                            scrollToSection(item.id);
+                            setIsOpen(false);
+                          }}
+                          className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
+                            isActive
+                              ? 'text-foreground gradient-text-1 font-semibold'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      );
+                    }
+                    return null;
                   })}
             </div>
           </div>
