@@ -18,7 +18,7 @@ interface HeroProps {
 }
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
-  const mandalaOpacity = useScrollOpacity(500);
+  const mandalaOpacity = useScrollOpacity(800); // Longer fade distance for full screen
 
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
@@ -55,8 +55,10 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background relative overflow-hidden">
-      {/* Mandala Background */}
-      <MandalaBackground opacity={mandalaOpacity} />
+      {/* Mandala Background - Full Screen */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
+        <MandalaBackground opacity={mandalaOpacity} />
+      </div>
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <div className="space-y-8">

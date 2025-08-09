@@ -51,31 +51,45 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Clear canvas
       ctx.clearRect(0, 0, rect.width, rect.height);
 
-      // Create mandala patterns
-      const layers = 6;
-      const maxRadius = Math.min(rect.width, rect.height) * 0.8;
+      // Create mandala patterns - much slower and full screen
+      const layers = 8;
+      const maxRadius = Math.max(rect.width, rect.height) * 0.7; // Full screen coverage
 
       for (let layer = 0; layer < layers; layer++) {
-        const radius = (maxRadius / layers) * (layer + 1) * 0.3;
-        const petals = 8 + layer * 4;
-        const rotationSpeed = (layer % 2 === 0 ? 1 : -1) * 0.5;
-        const rotation = (time * rotationSpeed + layer * 30) * Math.PI / 180;
+        const radius = (maxRadius / layers) * (layer + 1) * 0.4;
+        const petals = 6 + layer * 3;
+        const rotationSpeed = (layer % 2 === 0 ? 1 : -1) * 0.08; // Much slower
+        const rotation = (time * rotationSpeed + layer * 45) * Math.PI / 180;
 
         for (let i = 0; i < petals; i++) {
           const angle = (i / petals) * Math.PI * 2 + rotation;
           const x = centerX + Math.cos(angle) * radius;
           const y = centerY + Math.sin(angle) * radius;
 
-          // Create gradient for each petal
-          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 20 + layer * 5);
+          // Create gradient for each petal using sophisticated color palettes
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25 + layer * 8);
           
-          // Psychedelic color cycling
-          const hue1 = (time * 2 + i * 30 + layer * 60) % 360;
-          const hue2 = (hue1 + 60) % 360;
+          // Cycle through the three beautiful gradient palettes
+          const paletteIndex = Math.floor((time * 0.01 + layer * 0.3 + i * 0.1)) % 3;
+          const baseOpacity = 0.12 - layer * 0.01; // Much more transparent
           
-          gradient.addColorStop(0, `hsla(${hue1}, 70%, 60%, ${0.3 - layer * 0.03})`);
-          gradient.addColorStop(0.5, `hsla(${hue2}, 80%, 50%, ${0.2 - layer * 0.02})`);
-          gradient.addColorStop(1, `hsla(${hue1}, 60%, 40%, 0)`);
+          if (paletteIndex === 0) {
+            // Palette 1: #7c4dff to #1783ff
+            gradient.addColorStop(0, `rgba(124, 77, 255, ${baseOpacity * 1.5})`);
+            gradient.addColorStop(0.6, `rgba(23, 131, 255, ${baseOpacity})`);
+            gradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+          } else if (paletteIndex === 1) {
+            // Palette 2: #7c4dff to #ec3cdb to #eb5646
+            gradient.addColorStop(0, `rgba(124, 77, 255, ${baseOpacity * 1.2})`);
+            gradient.addColorStop(0.4, `rgba(236, 60, 219, ${baseOpacity})`);
+            gradient.addColorStop(0.8, `rgba(235, 86, 70, ${baseOpacity * 0.8})`);
+            gradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+          } else {
+            // Palette 3: #7c4dff to #253143
+            gradient.addColorStop(0, `rgba(124, 77, 255, ${baseOpacity})`);
+            gradient.addColorStop(0.7, `rgba(37, 49, 67, ${baseOpacity * 0.6})`);
+            gradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+          }
 
           ctx.fillStyle = gradient;
           ctx.beginPath();
@@ -85,10 +99,17 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           ctx.ellipse(x, y, petalSize, petalSize * 2, angle, 0, Math.PI * 2);
           ctx.fill();
 
-          // Add connecting lines
-          if (layer > 0) {
-            ctx.strokeStyle = `hsla(${hue1}, 60%, 50%, ${0.1 - layer * 0.01})`;
-            ctx.lineWidth = 1;
+          // Add connecting lines with new color scheme
+          if (layer > 1) {
+            const lineOpacity = 0.03 - layer * 0.003;
+            if (paletteIndex === 0) {
+              ctx.strokeStyle = `rgba(23, 131, 255, ${lineOpacity})`;
+            } else if (paletteIndex === 1) {
+              ctx.strokeStyle = `rgba(236, 60, 219, ${lineOpacity})`;
+            } else {
+              ctx.strokeStyle = `rgba(124, 77, 255, ${lineOpacity})`;
+            }
+            ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(x, y);
@@ -97,20 +118,35 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         }
       }
 
-      // Central mandala core
-      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 60);
-      const coreHue = time % 360;
-      coreGradient.addColorStop(0, `hsla(${coreHue}, 80%, 70%, 0.4)`);
-      coreGradient.addColorStop(0.5, `hsla(${(coreHue + 120) % 360}, 70%, 60%, 0.2)`);
-      coreGradient.addColorStop(1, `hsla(${(coreHue + 240) % 360}, 60%, 50%, 0)`);
+      // Central mandala core with new gradient palette
+      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
+      const corePhase = Math.floor(time * 0.02) % 3;
+      
+      if (corePhase === 0) {
+        // Core using palette 1
+        coreGradient.addColorStop(0, `rgba(124, 77, 255, 0.15)`);
+        coreGradient.addColorStop(0.6, `rgba(23, 131, 255, 0.08)`);
+        coreGradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+      } else if (corePhase === 1) {
+        // Core using palette 2
+        coreGradient.addColorStop(0, `rgba(124, 77, 255, 0.12)`);
+        coreGradient.addColorStop(0.4, `rgba(236, 60, 219, 0.08)`);
+        coreGradient.addColorStop(0.8, `rgba(235, 86, 70, 0.05)`);
+        coreGradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+      } else {
+        // Core using palette 3
+        coreGradient.addColorStop(0, `rgba(124, 77, 255, 0.1)`);
+        coreGradient.addColorStop(0.7, `rgba(37, 49, 67, 0.06)`);
+        coreGradient.addColorStop(1, `rgba(124, 77, 255, 0)`);
+      }
 
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 60, 0, Math.PI * 2);
       ctx.fill();
 
-      // Update time for next frame
-      setTime(prev => prev + 0.3);
+      // Update time for next frame - much slower
+      setTime(prev => prev + 0.1);
       
       animationRef.current = requestAnimationFrame(animate);
     };
