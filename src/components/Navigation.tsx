@@ -137,9 +137,12 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
               if (item.isExternal && item.href) {
                 return (
-                  <Link
+                  <button
                     key={item.href || item.label}
-                    href={item.href}
+                    onClick={(e) => {
+                      console.log('Blog link clicked:', item.href);
+                      window.location.href = item.href;
+                    }}
                     className={`transition-colors duration-200 cursor-pointer hover:opacity-75 ${
                       isActive
                         ? 'text-foreground gradient-text-1 font-semibold'
@@ -148,7 +151,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                     style={{ pointerEvents: 'auto' }}
                   >
                     {item.label}
-                  </Link>
+                  </button>
                 );
               } else if (!item.isExternal && item.id) {
                 return (
@@ -203,19 +206,22 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
                     if (item.isExternal && item.href) {
                       return (
-                        <Link
+                        <button
                           key={item.href || item.label}
-                          href={item.href}
-                          className={`block px-3 py-2 transition-colors cursor-pointer hover:opacity-75 ${
+                          className={`block px-3 py-2 transition-colors cursor-pointer hover:opacity-75 w-full text-left ${
                             isActive
                               ? 'text-foreground gradient-text-1 font-semibold'
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
-                          onClick={() => setIsOpen(false)}
+                          onClick={(e) => {
+                            console.log('Mobile blog link clicked:', item.href);
+                            setIsOpen(false);
+                            window.location.href = item.href;
+                          }}
                           style={{ pointerEvents: 'auto' }}
                         >
                           {item.label}
-                        </Link>
+                        </button>
                       );
                     } else if (!item.isExternal && item.id) {
                       return (
