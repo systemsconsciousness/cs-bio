@@ -78,17 +78,17 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
           {/* Profile Image */}
           <div className="relative inline-block">
             {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt={siteConfig?.owner_name || 'Profile'}
-                width={160}
-                height={160}
-                className="w-40 h-40 rounded-full mx-auto mb-8 object-cover border-8 border-accent/20"
-                unoptimized={true}
-              />
+                      <Image
+          src={avatarUrl}
+          alt={siteConfig?.owner_name || 'Profile'}
+          width={200}
+          height={200}
+          className="w-50 h-50 rounded-full mx-auto mb-8 object-cover border-8 border-accent/20"
+          unoptimized={true}
+        />
             ) : (
-              <div className="w-40 h-40 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
-                <span className="text-accent-foreground text-5xl font-bold">
+              <div className="w-50 h-50 bg-gradient-to-br from-accent to-accent/70 rounded-full mx-auto mb-8 flex items-center justify-center">
+                <span className="text-accent-foreground text-6xl font-bold">
                   {siteConfig?.owner_name?.charAt(0) || content?.title?.charAt(0) || 'U'}
                 </span>
               </div>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
+import { useActiveSection } from '@/hooks/useActiveSection';
 
 interface NavigationProps {
   siteName?: string;
@@ -11,6 +12,7 @@ interface NavigationProps {
 const Navigation = ({ siteName }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const activeSection = useActiveSection();
 
   // Smooth scroll to section function
   const scrollToSection = (sectionId: string) => {
@@ -111,9 +113,11 @@ const Navigation = ({ siteName }: NavigationProps) => {
           {/* Logo */}
                           <button
                   onClick={() => window.location.href = '/'}
-                  className="font-bold text-xl text-foreground hover:text-accent transition-colors cursor-pointer"
+                  className="font-bold text-xl text-foreground hover:text-accent transition-all duration-300 cursor-pointer group relative overflow-hidden"
                 >
-                  {siteName || 'CS'}
+                  <span className="relative z-10 transition-all duration-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#7c4dff] group-hover:via-[#1783ff] group-hover:to-[#ec3cdb] group-hover:animate-gradient-x">
+                    {siteName || 'CS'}
+                  </span>
                 </button>
 
           {/* Desktop Navigation */}
@@ -131,7 +135,11 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id!)}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer"
+                  className={`transition-colors duration-200 cursor-pointer ${
+                    activeSection === item.id
+                      ? 'text-foreground gradient-text-1 font-semibold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
                 >
                   {item.label}
                 </button>
@@ -165,26 +173,30 @@ const Navigation = ({ siteName }: NavigationProps) => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t border-border">
-              {navItems.map((item) => (
-                item.isExternal ? (
-                  <Link
-                    key={item.href}
-                    href={item.href!}
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollToSection(item.id!)}
-                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors w-full text-left cursor-pointer"
-                  >
-                    {item.label}
-                  </button>
-                )
-              ))}
+                                {navItems.map((item) => (
+                    item.isExternal ? (
+                      <Link
+                        key={item.href}
+                        href={item.href!}
+                        className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <button
+                        key={item.id}
+                        onClick={() => scrollToSection(item.id!)}
+                        className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
+                          activeSection === item.id
+                            ? 'text-foreground gradient-text-1 font-semibold'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    )
+                  ))}
             </div>
           </div>
         )}

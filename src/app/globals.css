@@ -168,11 +168,27 @@ html {
 }
 
 /* Ensure all clickable elements have pointer cursor */
-button, 
-a, 
-[role="button"], 
+button,
+a,
+[role="button"],
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* Animated gradient for site title hover */
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
 }
 
 /* Smooth hover animations on devices that support hover */
