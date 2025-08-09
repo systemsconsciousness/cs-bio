@@ -184,8 +184,8 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         ctx.fill();
       }
 
-      // Central mandala core with mouse-responsive gradient
-      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
+      // Central mandala core with mouse-responsive gradient - much smaller
+      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 30);
       const corePhase = Math.floor(time * 0.02 * speedMultiplier) % 3;
       
       if (corePhase === 0) {
@@ -209,9 +209,9 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
       
-      // Mouse-responsive breathing central core
-      const coreBreathing = Math.sin(time * 0.03 * speedMultiplier) * 0.3 + 1; // 0.7 to 1.3 multiplier
-      const coreSize = 50 * coreBreathing;
+      // Much smaller and slower breathing central core
+      const coreBreathing = Math.sin(time * 0.008 * speedMultiplier) * 0.2 + 1; // 0.8 to 1.2 multiplier, much slower
+      const coreSize = 15 * coreBreathing; // Much smaller base size
       
       ctx.arc(centerX, centerY, coreSize, 0, Math.PI * 2);
       ctx.fill();
