@@ -1,6 +1,8 @@
 import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
 import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
+import MandalaBackground from './MandalaBackground';
+import { useScrollOpacity } from '@/hooks/useScrollOpacity';
 
 interface HeroProps {
   content: HomePageContent | null;
@@ -8,6 +10,8 @@ interface HeroProps {
 }
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
+  const mandalaOpacity = useScrollOpacity(500);
+
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
     if (!fileField) return null;
@@ -42,8 +46,11 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const resumeUrl = getFileUrl(siteConfig?.resume_cv);
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background relative overflow-hidden">
+      {/* Mandala Background */}
+      <MandalaBackground opacity={mandalaOpacity} />
+      
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <div className="space-y-8">
           {/* Profile Image */}
           <div className="relative inline-block">
@@ -53,7 +60,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
                 alt={siteConfig?.owner_name || 'Profile'}
                 width={160}
                 height={160}
-                className="w-40 h-40 rounded-full mx-auto mb-8 object-cover"
+                className="w-40 h-40 rounded-full mx-auto mb-8 object-cover border-8 border-accent/20"
                 unoptimized={true}
               />
             ) : (
