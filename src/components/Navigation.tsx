@@ -109,9 +109,12 @@ const Navigation = ({ siteName }: NavigationProps) => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="font-bold text-xl text-foreground hover:text-accent transition-colors">
-            {siteName || 'CS'}
-          </Link>
+                          <button
+                  onClick={() => window.location.href = '/'}
+                  className="font-bold text-xl text-foreground hover:text-accent transition-colors cursor-pointer"
+                >
+                  {siteName || 'CS'}
+                </button>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">

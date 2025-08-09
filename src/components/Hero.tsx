@@ -20,7 +20,7 @@ interface HeroProps {
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
   const mandalaOpacity = useScrollOpacity(800); // Longer fade distance for full screen
-  const { scrollThroughSections } = useSectionScroll();
+  const { scrollThroughSections, addInterruptListeners } = useSectionScroll();
 
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
@@ -56,7 +56,14 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
   const resumeUrl = getFileUrl(siteConfig?.resume_cv);
 
   const handleViewMyWork = () => {
+    // Set up interrupt listeners and start scrolling immediately
+    const removeListeners = addInterruptListeners();
     scrollThroughSections();
+    
+    // Clean up listeners after scrolling completes (or is interrupted)
+    setTimeout(() => {
+      removeListeners();
+    }, 15000); // Clean up after 15 seconds max
   };
 
   return (

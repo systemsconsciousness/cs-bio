@@ -1,45 +1,66 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 export const useSectionScroll = () => {
-  // Enhanced easing functions for rolling wave effect
-  const easeInOutQuart = (t: number): number => {
-    return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+  const isScrollingRef = useRef(false);
+  const animationFrameRef = useRef<number | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // More gentle, continuous easing function
+  const easeInOutSine = (t: number): number => {
+    return -(Math.cos(Math.PI * t) - 1) / 2;
   };
 
-  // Rolling wave easing - creates a more fluid, ocean-like movement
-  const rollingWaveEase = (t: number): number => {
-    // Combine multiple easing curves for wave-like motion
-    const primary = easeInOutQuart(t);
-    const wave = Math.sin(t * Math.PI) * 0.1; // Subtle wave overlay
-    return Math.max(0, Math.min(1, primary + wave * (1 - t))); // Stronger wave at start
+  // Smoother, more luxurious easing
+  const smoothLuxuryEase = (t: number): number => {
+    // Combine sine with cubic for ultra-smooth feel
+    const sine = easeInOutSine(t);
+    const cubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    return sine * 0.7 + cubic * 0.3; // Blend for perfect smoothness
   };
 
-  const smoothScrollToElement = (element: HTMLElement, duration: number = 2200): Promise<void> => {
-    return new Promise((resolve) => {
+  const stopScrolling = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    isScrollingRef.current = false;
+  };
+
+  const smoothScrollToElement = (element: HTMLElement, duration: number = 1800): Promise<void> => {
+    return new Promise((resolve, reject) => {
       const start = window.pageYOffset;
-      const target = element.offsetTop;
+      const target = element.offsetTop - 80; // Account for fixed header
       const distance = target - start;
       let startTime: number | null = null;
 
       const animate = (currentTime: number) => {
+        if (!isScrollingRef.current) {
+          reject(new Error('Scroll interrupted'));
+          return;
+        }
+
         if (startTime === null) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
-        
-        // Apply rolling wave easing function
-        const ease = rollingWaveEase(progress);
+
+        // Apply smooth luxury easing
+        const ease = smoothLuxuryEase(progress);
         window.scrollTo(0, start + distance * ease);
 
         if (timeElapsed < duration) {
-          requestAnimationFrame(animate);
+          animationFrameRef.current = requestAnimationFrame(animate);
         } else {
           resolve();
         }
       };
 
-      requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     });
   };
 
@@ -47,25 +68,65 @@ export const useSectionScroll = () => {
     // Define the sections in order
     const sections = ['about', 'work', 'portfolio', 'blog', 'contact'];
     
-    // Faster, more fluid rolling wave timing
-    const scrollDuration = 2200; // 2.2 seconds per scroll (was 3000ms) - faster movement
-    const pauseDuration = 2000; // 2 seconds pause (was 2800ms) - shorter pauses for flow
+    // Set scrolling state
+    isScrollingRef.current = true;
     
-    for (let i = 0; i < sections.length; i++) {
-      const sectionId = sections[i];
-      const element = document.getElementById(sectionId);
-      
-      if (element) {
-        // Custom eased scroll to the section
-        await smoothScrollToElement(element, scrollDuration);
+    // Ultra-smooth, luxurious timing - start immediately
+    const scrollDuration = 1800; // 1.8 seconds per scroll - smooth and luxurious
+    const pauseDuration = 1600; // 1.6 seconds pause - enough to appreciate each section
+
+    try {
+      for (let i = 0; i < sections.length; i++) {
+        if (!isScrollingRef.current) break; // Check if interrupted
         
-        // Pause before moving to next section (except on last section)
-        if (i < sections.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, pauseDuration));
+        const sectionId = sections[i];
+        const element = document.getElementById(sectionId);
+        
+        if (element) {
+          // Immediately start scrolling to the section
+          await smoothScrollToElement(element, scrollDuration);
+          
+          // Pause before moving to next section (except on last section)
+          if (i < sections.length - 1 && isScrollingRef.current) {
+            await new Promise((resolve, reject) => {
+              timeoutRef.current = setTimeout(() => {
+                if (isScrollingRef.current) {
+                  resolve(void 0);
+                } else {
+                  reject(new Error('Scroll interrupted'));
+                }
+              }, pauseDuration);
+            });
+          }
         }
       }
+    } catch (error) {
+      // Scroll was interrupted, this is normal
+    } finally {
+      isScrollingRef.current = false;
     }
   }, []);
 
-  return { scrollThroughSections };
+  // Add event listeners to detect user interaction and stop scrolling
+  const addInterruptListeners = useCallback(() => {
+    const handleUserInteraction = () => {
+      stopScrolling();
+    };
+
+    // Listen for various user interactions
+    window.addEventListener('wheel', handleUserInteraction, { passive: true });
+    window.addEventListener('touchstart', handleUserInteraction, { passive: true });
+    window.addEventListener('keydown', handleUserInteraction);
+    document.addEventListener('click', handleUserInteraction);
+
+    // Return cleanup function
+    return () => {
+      window.removeEventListener('wheel', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+      window.removeEventListener('keydown', handleUserInteraction);
+      document.removeEventListener('click', handleUserInteraction);
+    };
+  }, []);
+
+  return { scrollThroughSections, stopScrolling, addInterruptListeners };
 };

@@ -110,12 +110,23 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           const x = centerX + Math.cos(angle) * radius;
           const y = centerY + Math.sin(angle) * radius;
 
+          // Calculate mouse proximity for this specific circle only
+          let mouseProximityMultiplier = 1;
+          if (mousePos.x > 0 || mousePos.y > 0) {
+            const distanceToMouse = Math.sqrt((x - mousePos.x) ** 2 + (y - mousePos.y) ** 2);
+            const proximityRadius = 120; // Radius of mouse influence
+            if (distanceToMouse < proximityRadius) {
+              const proximityFactor = 1 - (distanceToMouse / proximityRadius);
+              mouseProximityMultiplier = 1 + (proximityFactor * 2); // Boost opacity by up to 200%
+            }
+          }
+
           // Create gradient for each petal using sophisticated color palettes
           const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25 + layer * 8);
           
           // Cycle through the three beautiful gradient palettes
           const paletteIndex = Math.floor((time * 0.01 + layer * 0.3 + i * 0.1)) % 3;
-          const baseOpacity = 0.12 - layer * 0.01; // Much more transparent
+          const baseOpacity = (0.12 - layer * 0.01) * mouseProximityMultiplier; // Apply mouse effect to individual circles
           
           if (paletteIndex === 0) {
             // Palette 1: #7c4dff to #1783ff
@@ -165,24 +176,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         }
       }
 
-      // Ambient mouse highlight effect
-      if (mousePos.x > 0 || mousePos.y > 0) {
-        const highlightGradient = ctx.createRadialGradient(
-          mousePos.x, mousePos.y, 0,
-          mousePos.x, mousePos.y, 250 // Large, ambient radius
-        );
-        
-        // Create subtle, warm highlight that matches our color palette
-        highlightGradient.addColorStop(0, `rgba(124, 77, 255, 0.08)`); // Subtle purple center
-        highlightGradient.addColorStop(0.3, `rgba(23, 131, 255, 0.04)`); // Blue middle
-        highlightGradient.addColorStop(0.6, `rgba(236, 60, 219, 0.02)`); // Pink outer
-        highlightGradient.addColorStop(1, `rgba(124, 77, 255, 0)`); // Fade to transparent
-        
-        ctx.fillStyle = highlightGradient;
-        ctx.beginPath();
-        ctx.arc(mousePos.x, mousePos.y, 250, 0, Math.PI * 2);
-        ctx.fill();
-      }
+
 
       // Central mandala core with mouse-responsive gradient - much smaller
       const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 30);
