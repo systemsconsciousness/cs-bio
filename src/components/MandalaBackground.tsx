@@ -10,8 +10,16 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const [time, setTime] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure this only runs on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -116,7 +124,12 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [time]);
+  }, [time, isClient]);
+
+  // Don't render anything on the server
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <canvas

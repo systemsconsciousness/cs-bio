@@ -1,8 +1,14 @@
 import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
 import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
-import MandalaBackground from './MandalaBackground';
+import dynamic from 'next/dynamic';
 import { useScrollOpacity } from '@/hooks/useScrollOpacity';
+
+// Dynamically import MandalaBackground to avoid SSR issues
+const MandalaBackground = dynamic(() => import('./MandalaBackground'), {
+  ssr: false,
+  loading: () => null
+});
 
 interface HeroProps {
   content: HomePageContent | null;

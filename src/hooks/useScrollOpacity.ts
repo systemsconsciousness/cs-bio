@@ -6,6 +6,8 @@ export const useScrollOpacity = (fadeDistance: number = 400) => {
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') return;
     const handleScroll = () => {
       const scrollY = window.scrollY;
       
