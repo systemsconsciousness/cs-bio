@@ -16,7 +16,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
   
   // Create refs for each project using useMemo to avoid hook rule violations
   const projectRefs = useMemo(() => {
-    const refs: { [key: string]: React.RefObject<HTMLDivElement> } = {};
+    const refs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
     projects.forEach(project => {
       refs[project.uid] = React.createRef<HTMLDivElement>();
     });
@@ -83,7 +83,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
               >
                 <SparkleEffect 
                   isHovered={hoveredProject === project.uid}
-                  containerRef={projectRef as React.RefObject<HTMLElement>}
+                  containerRef={projectRef}
                   intensity={0.8}
                   color="#7c4dff"
                 />
