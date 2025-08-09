@@ -135,10 +135,10 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
                 : (activeSection === item.id); // For internal sections: check section id
 
-              return item.isExternal ? (
+              return item.isExternal && item.href ? (
                 <Link
                   key={item.href || item.label}
-                  href={item.href!}
+                  href={item.href}
                   className={`transition-colors duration-200 ${
                     isActive
                       ? 'text-foreground gradient-text-1 font-semibold'
@@ -147,7 +147,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 >
                   {item.label}
                 </Link>
-              ) : (
+              ) : !item.isExternal && item.id ? (
                 <button
                   key={item.id || item.label}
                   onClick={() => scrollToSection(item.id!)}
@@ -159,7 +159,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 >
                   {item.label}
                 </button>
-              );
+              ) : null;
             })}
           </div>
 
@@ -195,10 +195,10 @@ const Navigation = ({ siteName }: NavigationProps) => {
                       ? (item.label.toLowerCase() === activeSection) // For blog: check if activeSection is 'blog'
                       : (activeSection === item.id); // For internal sections: check section id
 
-                    return item.isExternal ? (
+                    return item.isExternal && item.href ? (
                       <Link
                         key={item.href || item.label}
-                        href={item.href!}
+                        href={item.href}
                         className={`block px-3 py-2 transition-colors ${
                           isActive
                             ? 'text-foreground gradient-text-1 font-semibold'
@@ -208,7 +208,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                       >
                         {item.label}
                       </Link>
-                    ) : (
+                    ) : !item.isExternal && item.id ? (
                       <button
                         key={item.id || item.label}
                         onClick={() => scrollToSection(item.id!)}
@@ -220,7 +220,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                       >
                         {item.label}
                       </button>
-                    );
+                    ) : null;
                   })}
             </div>
           </div>
