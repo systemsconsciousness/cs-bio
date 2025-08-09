@@ -32,7 +32,7 @@ export const useSectionScroll = () => {
     isScrollingRef.current = false;
   };
 
-  const smoothScrollToElement = (element: HTMLElement, duration: number = 1800): Promise<void> => {
+  const smoothScrollToElement = useCallback((element: HTMLElement, duration: number = 1800): Promise<void> => {
     return new Promise((resolve, reject) => {
       const start = window.pageYOffset;
       const target = element.offsetTop - 80; // Account for fixed header
@@ -62,7 +62,7 @@ export const useSectionScroll = () => {
 
       animationFrameRef.current = requestAnimationFrame(animate);
     });
-  };
+  }, []);
 
   const scrollThroughSections = useCallback(async () => {
     // Define the sections in order
