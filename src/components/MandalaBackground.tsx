@@ -12,6 +12,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const [time, setTime] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const [targetSpeed, setTargetSpeed] = useState(1);
 
   // Ensure this only runs on the client
   useEffect(() => {
@@ -40,7 +41,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Create speed multiplier: 0.1x at edges, 2.5x at center (much more subtle)
       const speed = 0.1 + (1 - normalizedDistance) * 2.4; // 0.1 to 2.5
       
-      setSpeedMultiplier(speed);
+      setTargetSpeed(speed);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -85,6 +86,11 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
 
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
+
+      // Smooth interpolation towards target speed (lerping)
+      const lerpFactor = 0.02; // How smooth the transition is (lower = smoother)
+      const newSpeed = speedMultiplier + (targetSpeed - speedMultiplier) * lerpFactor;
+      setSpeedMultiplier(newSpeed);
 
       // Create mandala patterns - much slower and bigger than screen
       const layers = 10;
@@ -204,7 +210,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [time, isClient, speedMultiplier]);
+  }, [time, isClient, speedMultiplier, targetSpeed]);
 
   // Don't render anything on the server
   if (!isClient) {

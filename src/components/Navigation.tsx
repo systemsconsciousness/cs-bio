@@ -12,6 +12,18 @@ const Navigation = ({ siteName }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
+  // Smooth scroll to section function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    setIsOpen(false); // Close mobile menu
+  };
+
   const updateThemeClasses = (dark: boolean) => {
     const html = document.documentElement;
     
@@ -84,12 +96,12 @@ const Navigation = ({ siteName }: NavigationProps) => {
   };
 
   const navItems = [
-    { href: '/#home', label: 'Home' },
-    { href: '/#about', label: 'About' },
-    { href: '/#work', label: 'Experience' },
-    { href: '/#portfolio', label: 'Portfolio' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/#contact', label: 'Contact' },
+    { id: 'home', label: 'Home', isExternal: false },
+    { id: 'about', label: 'About', isExternal: false },
+    { id: 'work', label: 'Experience', isExternal: false },
+    { id: 'portfolio', label: 'Portfolio', isExternal: false },
+    { href: '/blog', label: 'Blog', isExternal: true },
+    { id: 'contact', label: 'Contact', isExternal: false },
   ];
 
   return (
@@ -104,13 +116,23 @@ const Navigation = ({ siteName }: NavigationProps) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-              >
-                {item.label}
-              </Link>
+              item.isExternal ? (
+                <Link
+                  key={item.href}
+                  href={item.href!}
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id!)}
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  {item.label}
+                </button>
+              )
             ))}
           </div>
 
@@ -141,14 +163,24 @@ const Navigation = ({ siteName }: NavigationProps) => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t border-border">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </Link>
+                item.isExternal ? (
+                  <Link
+                    key={item.href}
+                    href={item.href!}
+                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id!)}
+                    className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-colors w-full text-left"
+                  >
+                    {item.label}
+                  </button>
+                )
               ))}
             </div>
           </div>
