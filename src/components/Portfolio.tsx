@@ -1,3 +1,5 @@
+'use client';
+
 import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
 import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
