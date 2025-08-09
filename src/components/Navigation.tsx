@@ -1,6 +1,6 @@
 'use client';
 
-// import Link from 'next/link'; // Temporarily using anchor tags for debugging
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useActiveSection } from '@/hooks/useActiveSection';
@@ -137,7 +137,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
               if (item.isExternal && item.href) {
                 return (
-                  <a
+                  <Link
                     key={item.href || item.label}
                     href={item.href}
                     className={`transition-colors duration-200 cursor-pointer hover:opacity-75 ${
@@ -148,7 +148,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                     style={{ pointerEvents: 'auto' }}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 );
               } else if (!item.isExternal && item.id) {
                 return (
@@ -203,7 +203,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
 
                     if (item.isExternal && item.href) {
                       return (
-                        <a
+                        <Link
                           key={item.href || item.label}
                           href={item.href}
                           className={`block px-3 py-2 transition-colors cursor-pointer hover:opacity-75 ${
@@ -215,7 +215,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                           style={{ pointerEvents: 'auto' }}
                         >
                           {item.label}
-                        </a>
+                        </Link>
                       );
                     } else if (!item.isExternal && item.id) {
                       return (

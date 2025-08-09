@@ -1,5 +1,5 @@
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-// import Link from 'next/link'; // Temporarily using anchor tags for debugging
+import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '@/lib/contentstack';
 
@@ -151,13 +151,13 @@ const Blog = ({ posts }: BlogProps) => {
 
                 {/* Read More */}
                 <div className="pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
-                  <a
+                  <Link
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base cursor-pointer"
                   >
                     Read Article
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>
@@ -176,13 +176,13 @@ const Blog = ({ posts }: BlogProps) => {
         {/* View All Posts */}
         {posts.length > 3 && (
           <div className="text-center mt-12">
-            <a
+            <Link
               href="/blog"
               className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-colors cursor-pointer"
             >
               View All Posts
               <ArrowRight className="w-5 h-5 ml-2" />
-            </a>
+            </Link>
           </div>
         )}
       </div>
