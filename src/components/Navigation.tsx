@@ -154,7 +154,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 return (
                   <button
                     key={item.id || item.label}
-                    onClick={() => scrollToSection(item.id)}
+                    onClick={() => scrollToSection(item.id!)}
                     className={`transition-colors duration-200 cursor-pointer ${
                       isActive
                         ? 'text-foreground gradient-text-1 font-semibold'
@@ -222,7 +222,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                         <button
                           key={item.id || item.label}
                           onClick={() => {
-                            scrollToSection(item.id);
+                            scrollToSection(item.id!);
                             setIsOpen(false);
                           }}
                           className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
