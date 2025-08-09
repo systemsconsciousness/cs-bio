@@ -171,7 +171,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
             >
               <SparkleEffect 
                 isHovered={hoveredButton === 'viewWork'}
-                containerRef={viewWorkRef}
+                containerRef={viewWorkRef as React.RefObject<HTMLElement>}
                 intensity={1.2}
                 color="#ffffff"
               />
@@ -194,7 +194,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
               >
                 <SparkleEffect 
                   isHovered={hoveredButton === 'resume'}
-                  containerRef={resumeRef}
+                  containerRef={resumeRef as React.RefObject<HTMLElement>}
                   intensity={0.8}
                   color="#7c4dff"
                 />
