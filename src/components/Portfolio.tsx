@@ -42,7 +42,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
     <section id="portfolio" className="py-20 bg-muted/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-sm font-semibold text-accent uppercase tracking-wide mb-2">
+          <h2 className="text-sm font-semibold gradient-text-1 uppercase tracking-wide mb-2">
             Portfolio
           </h2>
           <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -136,7 +136,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.project_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                     >
                       <Link className="w-4 h-4 mr-1" />
                       View Project
@@ -159,7 +159,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
                       href={project.live_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-3 py-2 gradient-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                     >
                       <ExternalLink className="w-4 h-4 mr-1" />
                       Live Demo

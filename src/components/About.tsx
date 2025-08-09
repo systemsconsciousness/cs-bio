@@ -13,7 +13,7 @@ const About = ({ content, siteConfig }: AboutProps) => {
           {/* Content */}
           <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
             <div>
-              <h2 className="text-sm font-semibold text-accent uppercase tracking-wide mb-2">
+              <h2 className="text-sm font-semibold gradient-text-1 uppercase tracking-wide mb-2">
                 About Me
               </h2>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 sm:mb-6">

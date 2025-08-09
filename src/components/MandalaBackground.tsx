@@ -53,9 +53,9 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
-      // Create mandala patterns - much slower and full screen
-      const layers = 8;
-      const maxRadius = Math.max(width, height) * 0.8; // Full screen coverage
+      // Create mandala patterns - much slower and bigger than screen
+      const layers = 10;
+      const maxRadius = Math.max(width, height) * 1.2; // Extends beyond screen for full coverage
 
       for (let layer = 0; layer < layers; layer++) {
         const radius = (maxRadius / layers) * (layer + 1) * 0.4;

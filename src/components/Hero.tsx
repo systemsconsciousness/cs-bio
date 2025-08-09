@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { HomePageContent, SiteConfiguration } from '@/lib/contentstack';
 import dynamic from 'next/dynamic';
 import { useScrollOpacity } from '@/hooks/useScrollOpacity';
+import { useSectionScroll } from '@/hooks/useSectionScroll';
 
 // Dynamically import MandalaBackground to avoid SSR issues
 const MandalaBackground = dynamic(() => import('./MandalaBackground'), {
@@ -19,6 +20,7 @@ interface HeroProps {
 
 const Hero = ({ content, siteConfig }: HeroProps) => {
   const mandalaOpacity = useScrollOpacity(800); // Longer fade distance for full screen
+  const { scrollThroughSections } = useSectionScroll();
 
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: SiteConfiguration['avatar_photo'] | SiteConfiguration['resume_cv']): string | null => {
@@ -52,6 +54,10 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
 
   const avatarUrl = getFileUrl(siteConfig?.avatar_photo);
   const resumeUrl = getFileUrl(siteConfig?.resume_cv);
+
+  const handleViewMyWork = () => {
+    scrollThroughSections();
+  };
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background relative overflow-hidden">
@@ -88,7 +94,7 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
               <span className="block text-foreground">
                 {siteConfig?.owner_name || content?.hero_headline || 'Your Name'}
               </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70 pb-2">
+              <span className="block gradient-text-2 pb-2">
                 {siteConfig?.site_subtitle || content?.hero_headline || 'Creator & Developer'}
               </span>
             </h1>
@@ -100,13 +106,13 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
 
           {/* CTA Buttons */}
           <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md sm:max-w-none mx-auto ${!resumeUrl ? 'sm:max-w-xs' : ''}`}>
-            <a
-              href="#portfolio"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-all duration-300 transform hover:scale-105"
+            <button
+              onClick={handleViewMyWork}
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 gradient-1 text-white rounded-full font-medium hover:opacity-90 transition-all duration-300 transform hover:scale-105"
             >
               View My Work
               <ArrowDown className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
-            </a>
+            </button>
             
             {resumeUrl && (
               <a
@@ -161,11 +167,6 @@ const Hero = ({ content, siteConfig }: HeroProps) => {
               )}
             </div>
           )}
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-6 h-6 text-muted-foreground" />
         </div>
       </div>
     </section>
