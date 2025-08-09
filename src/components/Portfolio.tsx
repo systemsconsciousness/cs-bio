@@ -3,7 +3,7 @@
 import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
 import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import SparkleEffect from './SparkleEffect';
 
 interface PortfolioProps {

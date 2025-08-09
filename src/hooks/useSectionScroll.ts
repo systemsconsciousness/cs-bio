@@ -7,19 +7,6 @@ export const useSectionScroll = () => {
   const animationFrameRef = useRef<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // More gentle, continuous easing function
-  const easeInOutSine = (t: number): number => {
-    return -(Math.cos(Math.PI * t) - 1) / 2;
-  };
-
-  // Smoother, more luxurious easing
-  const smoothLuxuryEase = (t: number): number => {
-    // Combine sine with cubic for ultra-smooth feel
-    const sine = easeInOutSine(t);
-    const cubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    return sine * 0.7 + cubic * 0.3; // Blend for perfect smoothness
-  };
-
   const stopScrolling = () => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -33,6 +20,18 @@ export const useSectionScroll = () => {
   };
 
   const smoothScrollToElement = useCallback((element: HTMLElement, duration: number = 1800): Promise<void> => {
+    // Define easing functions inside useCallback to avoid dependency issues
+    const easeInOutSine = (t: number): number => {
+      return -(Math.cos(Math.PI * t) - 1) / 2;
+    };
+
+    const smoothLuxuryEase = (t: number): number => {
+      // Combine sine with cubic for ultra-smooth feel
+      const sine = easeInOutSine(t);
+      const cubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      return sine * 0.7 + cubic * 0.3; // Blend for perfect smoothness
+    };
+
     return new Promise((resolve, reject) => {
       const start = window.pageYOffset;
       const target = element.offsetTop - 80; // Account for fixed header
@@ -62,7 +61,7 @@ export const useSectionScroll = () => {
 
       animationFrameRef.current = requestAnimationFrame(animate);
     });
-  }, [smoothLuxuryEase]);
+  }, []);
 
   const scrollThroughSections = useCallback(async () => {
     // Define the sections in order
