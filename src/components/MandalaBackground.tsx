@@ -183,7 +183,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           
           // Create varied circle shapes with mouse-responsive animation
           const baseSize = 6 + layer * 3;
-          const sizeVariation = Math.sin(time * 0.02 * speedMultiplier + i * 0.5 + layer * 0.3) * 0.5 + 1;
+          const sizeVariation = Math.sin(timeRef.current * 0.02 + i * 0.5 + layer * 0.3) * 0.5 + 1;
           const circleSize = baseSize * sizeVariation;
           
           ctx.arc(x, y, circleSize, 0, Math.PI * 2);
