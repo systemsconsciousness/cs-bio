@@ -3,7 +3,7 @@
 import { ExternalLink, Github, Star, Link } from 'lucide-react';
 import Image from 'next/image';
 import { PortfolioProject, SiteConfiguration } from '@/lib/contentstack';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import SparkleEffect from './SparkleEffect';
 
 interface PortfolioProps {
@@ -18,7 +18,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
   const projectRefs = useMemo(() => {
     const refs: { [key: string]: React.RefObject<HTMLDivElement> } = {};
     projects.forEach(project => {
-      refs[project.uid] = { current: null };
+      refs[project.uid] = React.createRef<HTMLDivElement>();
     });
     return refs;
   }, [projects]);
@@ -83,7 +83,7 @@ const Portfolio = ({ projects, siteConfig }: PortfolioProps) => {
               >
                 <SparkleEffect 
                   isHovered={hoveredProject === project.uid}
-                  containerRef={projectRef}
+                  containerRef={projectRef as React.RefObject<HTMLElement>}
                   intensity={0.8}
                   color="#7c4dff"
                 />
