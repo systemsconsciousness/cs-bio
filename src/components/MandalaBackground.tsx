@@ -26,17 +26,18 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
+    // Set canvas size to full screen
     const updateCanvasSize = () => {
       const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
+      const width = window.innerWidth;
+      const height = window.innerHeight;
       
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
       
       ctx.scale(dpr, dpr);
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
     };
 
     updateCanvasSize();
@@ -44,16 +45,17 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
 
     // Animation function
     const animate = () => {
-      const rect = canvas.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const centerX = width / 2;
+      const centerY = height / 2;
 
       // Clear canvas
-      ctx.clearRect(0, 0, rect.width, rect.height);
+      ctx.clearRect(0, 0, width, height);
 
       // Create mandala patterns - much slower and full screen
       const layers = 8;
-      const maxRadius = Math.max(rect.width, rect.height) * 0.7; // Full screen coverage
+      const maxRadius = Math.max(width, height) * 0.8; // Full screen coverage
 
       for (let layer = 0; layer < layers; layer++) {
         const radius = (maxRadius / layers) * (layer + 1) * 0.4;
@@ -94,9 +96,12 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           ctx.fillStyle = gradient;
           ctx.beginPath();
           
-          // Create petal shape
-          const petalSize = 8 + layer * 2;
-          ctx.ellipse(x, y, petalSize, petalSize * 2, angle, 0, Math.PI * 2);
+          // Create varied circle shapes instead of ellipses
+          const baseSize = 6 + layer * 3;
+          const sizeVariation = Math.sin(time * 0.02 + i * 0.5 + layer * 0.3) * 0.5 + 1; // 0.5 to 1.5 multiplier
+          const circleSize = baseSize * sizeVariation;
+          
+          ctx.arc(x, y, circleSize, 0, Math.PI * 2);
           ctx.fill();
 
           // Add connecting lines with new color scheme
@@ -142,7 +147,12 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
 
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 60, 0, Math.PI * 2);
+      
+      // Breathing central core
+      const coreBreathing = Math.sin(time * 0.03) * 0.3 + 1; // 0.7 to 1.3 multiplier
+      const coreSize = 50 * coreBreathing;
+      
+      ctx.arc(centerX, centerY, coreSize, 0, Math.PI * 2);
       ctx.fill();
 
       // Update time for next frame - much slower
