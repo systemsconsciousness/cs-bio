@@ -37,8 +37,8 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Normalize distance (0 = center, 1 = edge)
       const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
       
-      // Create speed multiplier: 0.1x at edges, 8x at center
-      const speed = 0.1 + (1 - normalizedDistance) * 7.9; // 0.1 to 8.0
+      // Create speed multiplier: 0.1x at edges, 2.5x at center (much more subtle)
+      const speed = 0.1 + (1 - normalizedDistance) * 2.4; // 0.1 to 2.5
       
       setSpeedMultiplier(speed);
     };
