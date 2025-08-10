@@ -1,7 +1,9 @@
+'use client';
+
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
 import { getBlogPost, getBlogPosts } from '@/lib/contentstack';
+import { useEffect, useState } from 'react';
 
 // Force this page to be dynamic (not cached)
 export const dynamic = 'force-dynamic';
@@ -13,13 +15,34 @@ interface BlogPostPageProps {
   }>;
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
-  const post = await getBlogPost(slug);
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [slug, setSlug] = useState<string>('');
 
-  if (!post) {
-    notFound();
-  }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const resolvedParams = await params;
+        const postSlug = resolvedParams.slug;
+        setSlug(postSlug);
+        
+        const fetchedPost = await getBlogPost(postSlug);
+        if (!fetchedPost) {
+          notFound();
+          return;
+        }
+        setPost(fetchedPost);
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [params]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -36,18 +59,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return readTime;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <p className="mt-4 text-muted-foreground">Loading blog post...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    notFound();
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Back to Blog */}
         <div className="mb-8">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
+          <button
+            onClick={() => {
+              console.log('Back to Blog clicked');
+              window.location.href = '/blog';
+            }}
+            className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Blog
-          </Link>
+          </button>
         </div>
 
         {/* Article Header */}
@@ -120,13 +161,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Article Footer */}
         <footer className="mt-16 pt-8 border-t border-border">
           <div className="flex justify-between items-center">
-            <Link
-              href="/blog"
-              className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
+            <button
+              onClick={() => {
+                console.log('Footer Back to Blog clicked');
+                window.location.href = '/blog';
+              }}
+              className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back to Blog
-            </Link>
+            </button>
             
             <div className="text-sm text-muted-foreground">
               Published {formatDate(post.published_date || post.created_at)}

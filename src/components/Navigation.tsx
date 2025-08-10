@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useActiveSection } from '@/hooks/useActiveSection';
+import { usePathname } from 'next/navigation';
 
 interface NavigationProps {
   siteName?: string;
@@ -13,15 +14,22 @@ const Navigation = ({ siteName }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const activeSection = useActiveSection();
+  const pathname = usePathname();
 
-  // Smooth scroll to section function
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+  // Smart navigation function
+  const navigateToSection = (sectionId: string) => {
+    // If we're on the home page, scroll to section
+    if (pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    } else {
+      // If we're on a different page (like blog), navigate to home page with section
+      window.location.href = `/#${sectionId}`;
     }
     setIsOpen(false); // Close mobile menu
   };
@@ -159,7 +167,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 return (
                   <button
                     key={item.id || item.label}
-                    onClick={() => scrollToSection(item.id!)}
+                    onClick={() => navigateToSection(item.id!)}
                     className={`transition-colors duration-200 cursor-pointer ${
                       isActive
                         ? 'text-foreground gradient-text-1 font-semibold'
@@ -232,8 +240,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                         <button
                           key={item.id || item.label}
                           onClick={() => {
-                            scrollToSection(item.id!);
-                            setIsOpen(false);
+                            navigateToSection(item.id!);
                           }}
                           className={`block px-3 py-2 transition-colors w-full text-left cursor-pointer ${
                             isActive
