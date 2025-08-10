@@ -182,15 +182,5 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
   );
 }
 
-// Generate static params for better performance (optional)
-export async function generateStaticParams() {
-  try {
-    const posts = await getBlogPosts();
-    return posts.map((post) => ({
-      slug: post.slug,
-    }));
-  } catch (error) {
-    console.error('Error generating static params for blog posts:', error);
-    return [];
-  }
-}
+// Note: generateStaticParams removed since we're using client-side data fetching
+// This allows for more dynamic content loading and better error handling
