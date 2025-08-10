@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
-import { getBlogPost, BlogPost } from '@/lib/contentstack';
+import { BlogPost } from '@/lib/contentstack';
 import { useEffect, useState } from 'react';
 
 // Note: dynamic and revalidate exports removed since this is now a client component
@@ -24,11 +24,16 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         const resolvedParams = await params;
         const postSlug = resolvedParams.slug;
         
-        const fetchedPost = await getBlogPost(postSlug);
-        if (!fetchedPost) {
+        const response = await fetch(`/api/blog/${postSlug}`);
+        if (response.status === 404) {
           notFound();
           return;
         }
+        if (!response.ok) {
+          throw new Error('Failed to fetch blog post');
+        }
+        
+        const fetchedPost = await response.json();
         setPost(fetchedPost);
       } catch (error) {
         console.error('Error fetching blog post:', error);

@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import { getBlogPosts, BlogPost } from '@/lib/contentstack';
+import { BlogPost } from '@/lib/contentstack';
 import { useEffect, useState } from 'react';
 
 // Note: dynamic and revalidate exports removed since this is now a client component
@@ -14,7 +14,11 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const fetchedPosts = await getBlogPosts();
+        const response = await fetch('/api/blog');
+        if (!response.ok) {
+          throw new Error('Failed to fetch blog posts');
+        }
+        const fetchedPosts = await response.json();
         setPosts(fetchedPosts);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
