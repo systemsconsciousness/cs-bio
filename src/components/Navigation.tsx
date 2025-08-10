@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+// Link component not needed - using buttons with window.location.href
 import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useActiveSection } from '@/hooks/useActiveSection';
@@ -139,7 +139,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                 return (
                   <button
                     key={item.href || item.label}
-                    onClick={(e) => {
+                    onClick={() => {
                       console.log('Blog link clicked:', item.href);
                       window.location.href = item.href;
                     }}
@@ -213,7 +213,7 @@ const Navigation = ({ siteName }: NavigationProps) => {
                               ? 'text-foreground gradient-text-1 font-semibold'
                               : 'text-muted-foreground hover:text-foreground'
                           }`}
-                          onClick={(e) => {
+                          onClick={() => {
                             console.log('Mobile blog link clicked:', item.href);
                             setIsOpen(false);
                             window.location.href = item.href;

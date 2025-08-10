@@ -1,7 +1,6 @@
 'use client';
 
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
 import Image from 'next/image';
 import React, { useState, useMemo } from 'react';
 import { BlogPost } from '@/lib/contentstack';
@@ -177,7 +176,7 @@ const Blog = ({ posts }: BlogProps) => {
                 {/* Read More */}
                 <div className="pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
                   <button
-                    onClick={(e) => {
+                    onClick={() => {
                       console.log('Blog post link clicked:', `/blog/${post.slug}`);
                       window.location.href = `/blog/${post.slug}`;
                     }}
