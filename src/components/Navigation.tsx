@@ -141,7 +141,9 @@ const Navigation = ({ siteName }: NavigationProps) => {
                     key={item.href || item.label}
                     onClick={() => {
                       console.log('Blog link clicked:', item.href);
-                      window.location.href = item.href;
+                      if (item.href) {
+                        window.location.href = item.href;
+                      }
                     }}
                     className={`transition-colors duration-200 cursor-pointer hover:opacity-75 ${
                       isActive
@@ -216,7 +218,9 @@ const Navigation = ({ siteName }: NavigationProps) => {
                           onClick={() => {
                             console.log('Mobile blog link clicked:', item.href);
                             setIsOpen(false);
-                            window.location.href = item.href;
+                            if (item.href) {
+                              window.location.href = item.href;
+                            }
                           }}
                           style={{ pointerEvents: 'auto' }}
                         >
