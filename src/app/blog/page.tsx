@@ -4,9 +4,8 @@ import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { getBlogPosts, BlogPost } from '@/lib/contentstack';
 import { useEffect, useState } from 'react';
 
-// Force this page to be dynamic (not cached)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Note: dynamic and revalidate exports removed since this is now a client component
+// Client components handle their own data fetching and caching
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
