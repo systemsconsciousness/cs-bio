@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface SparkleEffectProps {
   isHovered: boolean;
-  containerRef: React.RefObject<HTMLElement | null>;
+  containerRef: React.RefObject<HTMLElement | HTMLDivElement | null>;
   intensity?: number;
   color?: string;
 }

@@ -14,9 +14,9 @@ const WorkExperience = ({ experiences }: WorkExperienceProps) => {
 
   // Create refs for each experience using useMemo to avoid hook rule violations
   const experienceRefs = useMemo(() => {
-    const refs: { [key: string]: React.RefObject<HTMLElement | null> } = {};
+    const refs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
     experiences.forEach(experience => {
-      refs[experience.uid] = React.createRef<HTMLElement>();
+      refs[experience.uid] = React.createRef<HTMLDivElement>();
     });
     return refs;
   }, [experiences]);
