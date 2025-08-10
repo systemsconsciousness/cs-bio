@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
-import { getBlogPost, getBlogPosts } from '@/lib/contentstack';
+import { getBlogPost, BlogPost } from '@/lib/contentstack';
 import { useEffect, useState } from 'react';
 
 // Force this page to be dynamic (not cached)
@@ -16,16 +16,14 @@ interface BlogPostPageProps {
 }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  const [slug, setSlug] = useState<string>('');
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const resolvedParams = await params;
         const postSlug = resolvedParams.slug;
-        setSlug(postSlug);
         
         const fetchedPost = await getBlogPost(postSlug);
         if (!fetchedPost) {

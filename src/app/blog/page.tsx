@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import { getBlogPosts } from '@/lib/contentstack';
+import { getBlogPosts, BlogPost } from '@/lib/contentstack';
 import { useEffect, useState } from 'react';
 
 // Force this page to be dynamic (not cached)
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
