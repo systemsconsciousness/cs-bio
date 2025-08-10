@@ -1,13 +1,35 @@
+'use client';
+
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { getBlogPosts } from '@/lib/contentstack';
+import { BlogPost } from '@/lib/contentstack';
+import { useEffect, useState } from 'react';
 
-// Force this page to be dynamic (not cached)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Note: dynamic and revalidate exports removed since this is now a client component
+// Client components handle their own data fetching and caching
 
-export default async function BlogPage() {
-  const posts = await getBlogPosts();
+export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('/api/blog');
+        if (!response.ok) {
+          throw new Error('Failed to fetch blog posts');
+        }
+        const fetchedPosts = await response.json();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -23,6 +45,17 @@ export default async function BlogPage() {
     const readTime = Math.ceil(wordCount / wordsPerMinute);
     return readTime;
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <p className="mt-4 text-muted-foreground">Loading blog posts...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,13 +134,16 @@ export default async function BlogPage() {
 
                 {/* Read More */}
                 <div className="pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base"
+                  <button
+                    onClick={() => {
+                      console.log('Blog post link clicked:', `/blog/${post.slug}`);
+                      window.location.href = `/blog/${post.slug}`;
+                    }}
+                    className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base cursor-pointer"
                   >
                     Read Article
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  </button>
                 </div>
               </div>
             </article>

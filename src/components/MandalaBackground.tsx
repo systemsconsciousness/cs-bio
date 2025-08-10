@@ -9,28 +9,33 @@ interface MandalaBackgroundProps {
 const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-  const [time, setTime] = useState(0);
+  const timeRef = useRef(0); // Use ref instead of state to avoid re-renders
   const [isClient, setIsClient] = useState(false);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const [targetSpeed, setTargetSpeed] = useState(1);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const speedMultiplierRef = useRef(1); // Use ref for performance
+  const targetSpeedRef = useRef(1);
+  const mousePosRef = useRef({ x: 0, y: 0 }); // Use ref for performance
+  const lastFrameTimeRef = useRef(0); // For consistent timing
 
   // Ensure this only runs on the client
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Mouse tracking effect
+  // Mouse tracking effect - throttled for performance
   useEffect(() => {
     if (!isClient) return;
 
-    const handleMouseMove = (event: MouseEvent) => {
+    let rafId: number;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const updateMouseTracking = () => {
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
       
       // Calculate distance from center
-      const deltaX = event.clientX - centerX;
-      const deltaY = event.clientY - centerY;
+      const deltaX = mouseX - centerX;
+      const deltaY = mouseY - centerY;
       const distanceFromCenter = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
       
       // Calculate maximum possible distance (corner to center)
@@ -39,17 +44,31 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       // Normalize distance (0 = center, 1 = edge)
       const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
       
-      // Create speed multiplier: 0.3x at edges, 2.5x at center (never backward)
-      const speed = 0.3 + (1 - normalizedDistance) * 2.2; // 0.3 to 2.5 (always forward)
+      // Create speed multiplier: 0.6x at edges, 1.4x at center (more conservative range)
+      const speed = 0.6 + (1 - normalizedDistance) * 0.8; // 0.6 to 1.4 (more stable)
       
-      setTargetSpeed(speed);
-      setMousePos({ x: event.clientX, y: event.clientY });
+      targetSpeedRef.current = speed;
+      mousePosRef.current = { x: mouseX, y: mouseY };
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+      
+      // Throttle updates using RAF
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateMouseTracking);
+    };
+
+    // Only add mouse tracking on desktop to improve mobile performance
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
     
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(rafId);
     };
   }, [isClient]);
 
@@ -62,9 +81,10 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size to full screen
+    // Set canvas size to full screen with mobile optimization
     const updateCanvasSize = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const isMobile = window.innerWidth < 768;
+      const dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 2) : (window.devicePixelRatio || 1); // Limit DPR on mobile
       const width = window.innerWidth;
       const height = window.innerHeight;
       
@@ -79,54 +99,66 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
     updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
 
-    // Animation function
-    const animate = () => {
+    // Animation function with consistent timing
+    const animate = (currentTime: number) => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       const centerX = width / 2;
       const centerY = height / 2;
 
+      // Calculate delta time for consistent animation speed
+      if (lastFrameTimeRef.current === 0) {
+        lastFrameTimeRef.current = currentTime;
+      }
+      const deltaTime = (currentTime - lastFrameTimeRef.current) / 1000; // Convert to seconds
+      lastFrameTimeRef.current = currentTime;
+
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
       // Enhanced smooth interpolation with more fluid, delayed response
-      const lerpFactor = 0.008; // Much slower transition for more fluid feel (was 0.02)
-      const newSpeed = speedMultiplier + (targetSpeed - speedMultiplier) * lerpFactor;
-      setSpeedMultiplier(newSpeed);
+      const lerpFactor = 0.02; // Faster response for better performance
+      const newSpeed = speedMultiplierRef.current + (targetSpeedRef.current - speedMultiplierRef.current) * lerpFactor;
+      speedMultiplierRef.current = newSpeed;
 
-      // Create mandala patterns - much slower and bigger than screen
-      const layers = 10;
-      const maxRadius = Math.max(width, height) * 1.2; // Extends beyond screen for full coverage
+      // Create mandala patterns - optimized for performance
+      const isMobile = width < 768;
+      const layers = isMobile ? 6 : 8; // Further reduced layers on mobile
+      const maxRadius = Math.max(width, height) * (isMobile ? 0.8 : 1.0); // Smaller on mobile
+
+      // Update time consistently using delta time
+      timeRef.current += deltaTime * 60 * newSpeed; // 60 = base speed, consistent across framerates
 
       for (let layer = 0; layer < layers; layer++) {
         const radius = (maxRadius / layers) * (layer + 1) * 0.4;
         const petals = 6 + layer * 3;
         const baseRotationSpeed = (layer % 2 === 0 ? 1 : -1) * 0.08;
-        const rotationSpeed = baseRotationSpeed * speedMultiplier; // Mouse-responsive speed
-        const rotation = (time * rotationSpeed + layer * 45) * Math.PI / 180;
+        const rotation = (timeRef.current * baseRotationSpeed + layer * 45) * Math.PI / 180;
 
         for (let i = 0; i < petals; i++) {
           const angle = (i / petals) * Math.PI * 2 + rotation;
           const x = centerX + Math.cos(angle) * radius;
           const y = centerY + Math.sin(angle) * radius;
 
-          // Calculate mouse proximity for this specific circle only
+          // Calculate mouse proximity for this specific circle only (desktop only)
           let mouseProximityMultiplier = 1;
-          if (mousePos.x > 0 || mousePos.y > 0) {
+          const mousePos = mousePosRef.current;
+          
+          if (!isMobile && (mousePos.x > 0 || mousePos.y > 0)) {
             const distanceToMouse = Math.sqrt((x - mousePos.x) ** 2 + (y - mousePos.y) ** 2);
             const proximityRadius = 120; // Radius of mouse influence
             if (distanceToMouse < proximityRadius) {
               const proximityFactor = 1 - (distanceToMouse / proximityRadius);
-              mouseProximityMultiplier = 1 + (proximityFactor * 2); // Boost opacity by up to 200%
+              mouseProximityMultiplier = 1 + (proximityFactor * 1.5); // Reduced boost for better performance
             }
           }
 
           // Create gradient for each petal using sophisticated color palettes
-          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25 + layer * 8);
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 20 + layer * 6); // Smaller gradients for performance
           
           // Cycle through the three beautiful gradient palettes
-          const paletteIndex = Math.floor((time * 0.01 + layer * 0.3 + i * 0.1)) % 3;
-          const baseOpacity = (0.12 - layer * 0.01) * mouseProximityMultiplier; // Apply mouse effect to individual circles
+          const paletteIndex = Math.floor((timeRef.current * 0.01 + layer * 0.3 + i * 0.1)) % 3;
+          const baseOpacity = (0.1 - layer * 0.008) * mouseProximityMultiplier; // Reduced base opacity for subtlety
           
           if (paletteIndex === 0) {
             // Palette 1: #7c4dff to #1783ff
@@ -151,7 +183,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
           
           // Create varied circle shapes with mouse-responsive animation
           const baseSize = 6 + layer * 3;
-          const sizeVariation = Math.sin(time * 0.02 * speedMultiplier + i * 0.5 + layer * 0.3) * 0.5 + 1;
+          const sizeVariation = Math.sin(timeRef.current * 0.02 + i * 0.5 + layer * 0.3) * 0.5 + 1;
           const circleSize = baseSize * sizeVariation;
           
           ctx.arc(x, y, circleSize, 0, Math.PI * 2);
@@ -179,8 +211,8 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
 
 
       // Central mandala core with mouse-responsive gradient - much smaller
-      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 30);
-      const corePhase = Math.floor(time * 0.02 * speedMultiplier) % 3;
+      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 25); // Even smaller radius for performance
+      const corePhase = Math.floor(timeRef.current * 0.02) % 3;
       
       if (corePhase === 0) {
         // Core using palette 1
@@ -204,20 +236,18 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
       ctx.beginPath();
       
       // Much smaller and slower breathing central core
-      const coreBreathing = Math.sin(time * 0.008 * speedMultiplier) * 0.2 + 1; // 0.8 to 1.2 multiplier, much slower
-      const coreSize = 15 * coreBreathing; // Much smaller base size
+      const coreBreathing = Math.sin(timeRef.current * 0.008) * 0.2 + 1; // 0.8 to 1.2 multiplier, much slower
+      const coreSize = 12 * coreBreathing; // Even smaller base size for mobile
       
       ctx.arc(centerX, centerY, coreSize, 0, Math.PI * 2);
       ctx.fill();
 
-      // Update time for next frame - base speed with mouse multiplier
-      setTime(prev => prev + (0.1 * speedMultiplier));
-      
+      // Continue animation with consistent timing
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Start animation
-    animate();
+    // Start animation with initial timestamp
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', updateCanvasSize);
@@ -225,7 +255,7 @@ const MandalaBackground = ({ opacity = 1 }: MandalaBackgroundProps) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [time, isClient, speedMultiplier, targetSpeed, mousePos]);
+  }, [isClient]); // Only depend on isClient for much better performance
 
   // Don't render anything on the server
   if (!isClient) {

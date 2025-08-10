@@ -3,6 +3,7 @@
 import { Github, Linkedin, Mail } from 'lucide-react';
 import { SiteConfiguration } from '@/lib/contentstack';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 
 // Dynamically import FooterMandala to avoid SSR issues
 const FooterMandala = dynamic(() => import('./FooterMandala'), {
@@ -15,6 +16,22 @@ interface FooterProps {
 }
 
 const Footer = ({ siteConfig }: FooterProps) => {
+  const pathname = usePathname();
+
+  // Smart navigation function for footer links
+  const navigateToSection = (sectionId: string) => {
+    if (pathname === '/') {
+      // If on home page, scroll to section
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+      // If on different page, navigate to home with section
+      window.location.href = `/#${sectionId}`;
+    }
+  };
+
   // Create social links array with dynamic URLs from siteConfig
   const socialLinks = [
     {
@@ -73,24 +90,36 @@ const Footer = ({ siteConfig }: FooterProps) => {
             <h4 className="font-semibold mb-4 gradient-text-2">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+                <button 
+                  onClick={() => navigateToSection('about')}
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer text-left"
+                >
                   About
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#work" className="text-muted-foreground hover:text-foreground transition-colors">
+                <button 
+                  onClick={() => navigateToSection('work')}
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer text-left"
+                >
                   Experience
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#portfolio" className="text-muted-foreground hover:text-foreground transition-colors">
+                <button 
+                  onClick={() => navigateToSection('portfolio')}
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer text-left"
+                >
                   Portfolio
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#blog" className="text-muted-foreground hover:text-foreground transition-colors">
+                <button 
+                  onClick={() => navigateToSection('blog')}
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer text-left"
+                >
                   Blog
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -101,12 +130,12 @@ const Footer = ({ siteConfig }: FooterProps) => {
             <p className="text-muted-foreground mb-2">
               Interested in working together?
             </p>
-            <a
-              href="#contact"
+            <button
+              onClick={() => navigateToSection('contact')}
               className="inline-flex items-center px-4 py-2 gradient-1 text-white rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
             >
               Let&apos;s Connect
-            </a>
+            </button>
           </div>
         </div>
 

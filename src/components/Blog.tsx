@@ -1,13 +1,27 @@
+'use client';
+
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
 import Image from 'next/image';
+import React, { useState, useMemo } from 'react';
 import { BlogPost } from '@/lib/contentstack';
+import SparkleEffect from './SparkleEffect';
 
 interface BlogProps {
   posts: BlogPost[];
 }
 
 const Blog = ({ posts }: BlogProps) => {
+  const [hoveredPost, setHoveredPost] = useState<string | null>(null);
+
+  // Create refs for each blog post using useMemo to avoid hook rule violations
+  const postRefs = useMemo(() => {
+    const refs: { [key: string]: React.RefObject<HTMLElement | null> } = {};
+    posts.forEach(post => {
+      refs[post.uid] = React.createRef<HTMLElement>();
+    });
+    return refs;
+  }, [posts]);
+
   // Helper function to extract file URL from various Contentstack file field formats
   const getFileUrl = (fileField: BlogPost['featured_image']): string | null => {
     if (!fileField) return null;
@@ -74,12 +88,22 @@ const Blog = ({ posts }: BlogProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {featuredPosts.map((post) => {
             const featuredImageUrl = getFileUrl(post.featured_image);
+            const postRef = postRefs[post.uid];
             
             return (
               <article
                 key={post.uid}
-                className="group bg-muted/30 rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                ref={postRef}
+                className="group bg-muted/30 rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative"
+                onMouseEnter={() => setHoveredPost(post.uid)}
+                onMouseLeave={() => setHoveredPost(null)}
               >
+                <SparkleEffect
+                  isHovered={hoveredPost === post.uid}
+                  containerRef={postRef}
+                  intensity={0.6}
+                  color="#7c4dff"
+                />
                 {/* Article Image */}
                 <div className="relative h-48 bg-gradient-to-br from-accent/20 to-accent/5 overflow-hidden">
                   {featuredImageUrl ? (
@@ -151,13 +175,16 @@ const Blog = ({ posts }: BlogProps) => {
 
                 {/* Read More */}
                 <div className="pt-4 sm:pt-6 border-t border-border mt-4 sm:mt-6">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base"
+                  <button
+                    onClick={() => {
+                      console.log('Blog post link clicked:', `/blog/${post.slug}`);
+                      window.location.href = `/blog/${post.slug}`;
+                    }}
+                    className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 text-sm sm:text-base cursor-pointer"
                   >
                     Read Article
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  </button>
                 </div>
               </div>
             </article>
@@ -176,13 +203,16 @@ const Blog = ({ posts }: BlogProps) => {
         {/* View All Posts */}
         {posts.length > 3 && (
           <div className="text-center mt-12">
-            <Link
-              href="/blog"
-              className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-colors"
+            <button
+              onClick={() => {
+                console.log('View All Posts clicked');
+                window.location.href = "/blog";
+              }}
+              className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-full font-medium hover:bg-accent/90 transition-colors cursor-pointer"
             >
               View All Posts
               <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
+            </button>
           </div>
         )}
       </div>

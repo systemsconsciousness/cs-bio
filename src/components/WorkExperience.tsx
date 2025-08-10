@@ -1,11 +1,26 @@
+'use client';
+
 import { Calendar, MapPin } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
 import { WorkExperience as WorkExperienceType } from '@/lib/contentstack';
+import SparkleEffect from './SparkleEffect';
 
 interface WorkExperienceProps {
   experiences: WorkExperienceType[];
 }
 
 const WorkExperience = ({ experiences }: WorkExperienceProps) => {
+  const [hoveredExperience, setHoveredExperience] = useState<string | null>(null);
+
+  // Create refs for each experience using useMemo to avoid hook rule violations
+  const experienceRefs = useMemo(() => {
+    const refs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
+    experiences.forEach(experience => {
+      refs[experience.uid] = React.createRef<HTMLDivElement>();
+    });
+    return refs;
+  }, [experiences]);
+
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -30,11 +45,23 @@ const WorkExperience = ({ experiences }: WorkExperienceProps) => {
         </div>
 
         <div className="space-y-8">
-          {experiences.map((experience, index) => (
+          {experiences.map((experience, index) => {
+            const experienceRef = experienceRefs[experience.uid];
+            
+            return (
             <div
               key={experience.uid}
+              ref={experienceRef}
               className="relative bg-muted/30 rounded-2xl p-6 md:p-8 border border-border hover:shadow-lg transition-all duration-300"
+              onMouseEnter={() => setHoveredExperience(experience.uid)}
+              onMouseLeave={() => setHoveredExperience(null)}
             >
+              <SparkleEffect
+                isHovered={hoveredExperience === experience.uid}
+                containerRef={experienceRef}
+                intensity={0.8}
+                color="#7c4dff"
+              />
               {/* Timeline connector */}
               {index !== experiences.length - 1 && (
                 <div className="absolute left-8 bottom-0 w-0.5 h-8 bg-border transform translate-y-full hidden md:block"></div>
@@ -101,7 +128,8 @@ const WorkExperience = ({ experiences }: WorkExperienceProps) => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {experiences.length === 0 && (

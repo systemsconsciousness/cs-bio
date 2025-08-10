@@ -1,11 +1,12 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
-import { getBlogPost, getBlogPosts } from '@/lib/contentstack';
+'use client';
 
-// Force this page to be dynamic (not cached)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+import { notFound } from 'next/navigation';
+import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
+import { BlogPost } from '@/lib/contentstack';
+import { useEffect, useState } from 'react';
+
+// Note: dynamic and revalidate exports removed since this is now a client component
+// Client components handle their own data fetching and caching
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -13,13 +14,37 @@ interface BlogPostPageProps {
   }>;
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
-  const post = await getBlogPost(slug);
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!post) {
-    notFound();
-  }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const resolvedParams = await params;
+        const postSlug = resolvedParams.slug;
+        
+        const response = await fetch(`/api/blog/${postSlug}`);
+        if (response.status === 404) {
+          notFound();
+          return;
+        }
+        if (!response.ok) {
+          throw new Error('Failed to fetch blog post');
+        }
+        
+        const fetchedPost = await response.json();
+        setPost(fetchedPost);
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [params]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -36,18 +61,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return readTime;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <p className="mt-4 text-muted-foreground">Loading blog post...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    notFound();
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Back to Blog */}
         <div className="mb-8">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
+          <button
+            onClick={() => {
+              console.log('Back to Blog clicked');
+              window.location.href = '/blog';
+            }}
+            className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Blog
-          </Link>
+          </button>
         </div>
 
         {/* Article Header */}
@@ -120,13 +163,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Article Footer */}
         <footer className="mt-16 pt-8 border-t border-border">
           <div className="flex justify-between items-center">
-            <Link
-              href="/blog"
-              className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200"
+            <button
+              onClick={() => {
+                console.log('Footer Back to Blog clicked');
+                window.location.href = '/blog';
+              }}
+              className="inline-flex items-center text-accent font-medium hover:gap-2 transition-all duration-200 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back to Blog
-            </Link>
+            </button>
             
             <div className="text-sm text-muted-foreground">
               Published {formatDate(post.published_date || post.created_at)}
@@ -138,15 +184,5 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   );
 }
 
-// Generate static params for better performance (optional)
-export async function generateStaticParams() {
-  try {
-    const posts = await getBlogPosts();
-    return posts.map((post) => ({
-      slug: post.slug,
-    }));
-  } catch (error) {
-    console.error('Error generating static params for blog posts:', error);
-    return [];
-  }
-}
+// Note: generateStaticParams removed since we're using client-side data fetching
+// This allows for more dynamic content loading and better error handling
