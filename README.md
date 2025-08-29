@@ -167,7 +167,7 @@ The site is a standard Next.js application and can be deployed to any platform t
 
 ## Support
 
-If you encounter any issues or have questions, please open an issue on GitHub.
+This project is for demo purposes only. Use at your own risk.
 
 ## License
 
